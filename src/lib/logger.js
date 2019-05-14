@@ -1,6 +1,5 @@
 import winston from 'winston';
 import Transport from 'winston-transport';
-import { get, cloneDeep } from 'lodash';
 
 const dev = process.env.NODE_ENV === 'development';
 const test = process.env.NODE_ENV === 'test';
@@ -52,19 +51,7 @@ if (!test || process.env.LOGS) {
 
 const Logger = winston.createLogger({
   format: winston.format.combine(
-    winston.format((info) => {
-      if (get(info, 'headers.authorization')) {
-        // We need to clone the headers deeply because it's the same headers object being used
-        // by Express.
-        const clonedHeaders = cloneDeep(info.headers);
-
-        clonedHeaders.authorization = '[REDACTED]';
-
-        // eslint-disable-next-line
-        info.headers = clonedHeaders;
-      }
-      return info;
-    })(),
+    winston.format(info => info)(),
     winston.format.json(),
   ),
   transports,

@@ -1,4 +1,4 @@
-import { getLiquidatableAccounts, getExpiredAccounts } from '../clients/brokerage';
+import { getLiquidatableAccounts, getExpiredAccounts } from '../clients/dydx';
 import { delay } from './delay';
 import Logger from './logger';
 

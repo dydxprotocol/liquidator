@@ -28,14 +28,10 @@
   "dependencies": {
     "@dydxprotocol/solo": "0.5.2",
     "bignumber.js": "^8.1.1",
-    "body-parser": "^1.18.3",
-    "cors": "^2.8.5",
     "dotenv-flow": "^0.4.0",
-    "express": "^4.16.4",
     "lodash": "^4.17.11",
     "lru-cache": "^5.1.1",
     "luxon": "^1.11.3",
-    "nocache": "^2.1.0",
     "request-promise-native": "^1.0.7",
     "winston": "^3.2.1",
     "winston-transport": "^4.3.0"

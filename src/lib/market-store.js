@@ -1,4 +1,4 @@
-import { getMarkets } from '../clients/brokerage';
+import { getMarkets } from '../clients/dydx';
 import { delay } from './delay';
 import Logger from './logger';
 

@@ -11,7 +11,7 @@ import { getLatestBlockTimestamp } from './block-helper';
 import { getGasPrice } from '../lib/gas-price';
 import Logger from '../lib/logger';
 
-const collateralPreferences = process.env.SOLO_LIQUIDATION_COLLATERAL_PREFERENCES.split(',')
+const collateralPreferences = process.env.LIQUIDATION_COLLATERAL_PREFERENCES.split(',')
   .map(pref => pref.trim());
 
 export async function liquidateAccount(account) {

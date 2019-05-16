@@ -46,7 +46,7 @@ export default class AccountStore {
         });
       }
 
-      await delay(Number(process.env.POSITION_POLL_INTERVAL_MS));
+      await delay(Number(process.env.ACCOUNT_POLL_INTERVAL_MS));
     }
   }
 

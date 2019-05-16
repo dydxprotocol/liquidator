@@ -45,7 +45,7 @@ export default class MarketStore {
 
     Logger.info({
       at: 'MarketStore#_update',
-      message: 'Updated markets',
+      message: 'Finished updating markets',
     });
   }
 }

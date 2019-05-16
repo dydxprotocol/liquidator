@@ -44,7 +44,7 @@ if (!test || process.env.LOGS) {
     new winston.transports.Console({
       level: 'debug',
       handleExceptions: true,
-      format: (dev || test) ? alignedWithColorsAndTime : undefined,
+      format: alignedWithColorsAndTime,
     }),
   );
 }

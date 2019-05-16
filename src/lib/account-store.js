@@ -120,5 +120,10 @@ export default class AccountStore {
 
     this.liquidatableAccounts = nextLiquidatableAccounts;
     this.expiredAccounts = filteredNextExpiredAccounts;
+
+    Logger.info({
+      at: 'AccountStore#_update',
+      message: 'Finished updating accounts',
+    });
   }
 }

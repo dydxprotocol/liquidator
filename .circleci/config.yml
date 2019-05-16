@@ -1,0 +1,85 @@
+version: 2
+jobs:
+  checkout_and_install:
+    docker:
+      - image: dydxprotocol/node:8.12-alpine-v1
+    working_directory: ~/build
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - dependency-cache-v1-{{ .Branch }}-
+            - dependency-cache-v1-
+      - run:
+          name: Install Dependencies
+          command: npm ci
+      - save_cache:
+          key: dependency-cache-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            - "$HOME/.npm"
+      - save_cache:
+          key: cache-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/build
+  test:
+    docker:
+      - image: dydxprotocol/node:8.12-alpine-v1
+    working_directory: ~/build
+    steps:
+      - restore_cache:
+          key: cache-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Test
+          command: npm test
+  lint:
+    docker:
+      - image: dydxprotocol/node:8.12-alpine-v1
+    working_directory: ~/build
+    steps:
+      - restore_cache:
+          key: cache-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Lint
+          command: npm run lint
+  build:
+    docker:
+      - image: dydxprotocol/node:8.12-alpine-v1
+    working_directory: ~/build
+    steps:
+      - restore_cache:
+          key: cache-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Build
+          command: npm run build
+      - save_cache:
+          key: cache-completed-build-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/build
+  coverage:
+    docker:
+      - image: dydxprotocol/node:8.12-alpine-v1
+    working_directory: ~/build
+    steps:
+      - restore_cache:
+          key: cache-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Coverage
+          command: npm run coverage -- --coverageReporters=text-lcov | node_modules/.bin/coveralls
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - checkout_and_install
+      - test:
+          requires:
+            - checkout_and_install
+      - lint:
+          requires:
+            - checkout_and_install
+      - build:
+          requires:
+            - checkout_and_install
+      - coverage:
+          requires:
+            - checkout_and_install

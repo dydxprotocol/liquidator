@@ -1,7 +1,6 @@
 import winston from 'winston';
 import Transport from 'winston-transport';
 
-const dev = process.env.NODE_ENV === 'development';
 const test = process.env.NODE_ENV === 'test';
 
 class StackTransport extends Transport {

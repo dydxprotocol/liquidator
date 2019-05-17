@@ -91,10 +91,11 @@ Liquidator Account:
 |GAS_STATION_URL|URL of the gas station API to use
 |GAS_PRICE_MULTIPLIER|How much to multiply the `fast` gas price by when sending transactions
 |GAS_PRICE_UPDATE_FREQUENCY_SEC|How frequently to update the gas price
-|LIQUIDATION_COLLATERAL_PREFERENCES|List of preferences for which collateral markets to receive first when liquidating
-|LIQUIDATOR_ACCOUNT_NUMBER|The dYdX account number to use for the liquidating account (0 will show up on [trade.dydx.exchange/account](https://trade.dydx.exchange/account)|
+|LIQUIDATION_COLLATERAL_PREFERENCES|List of preferences for which collateral markets to receive first when liquidating|
+|LIQUIDATION_OWED_PREFERENCES|List of preferences for which markets to liquidate first on an account when liquidating|
+|LIQUIDATOR_ACCOUNT_NUMBER|The dYdX account number to use for the liquidating account (0 will show up on [trade.dydx.exchange/account](https://trade.dydx.exchange/account))|
+|MIN_LIQUIDATOR_ACCOUNT_COLLATERALIZATION|The desired minimum collateralization of the liquidator account|
 |ETHEREUM_NODE_URL|The URL of the Ethereum node to use|
 |NETWORK_ID|Ethereum Network ID|
 |ACCOUNT_POLL_INTERVAL_MS|How frequently to poll for liquidatable accounts|
 |MARKET_POLL_INTERVAL_MS|How frequently to poll for market updates|
-

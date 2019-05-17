@@ -30,4 +30,23 @@ export const loadAccounts = async () => {
       address: liquidatorAccount.address,
     });
   }
+
+  const isProxyAproved = await solo.getters.getIsLocalOperator(
+    liquidatorAccount,
+    solo.contracts.liquidatorProxyV1.options.address,
+  );
+
+  if (!isProxyAproved) {
+    Logger.info({
+      at: 'solo#loadAccounts',
+      message: 'Liquidation proxy contract has not been approved. Approving...',
+      address: liquidatorAccount.address,
+      proxyAddress: solo.contracts.liquidatorProxyV1.options.address,
+    });
+
+    await solo.permissions.approveOperator(
+      solo.contracts.liquidatorProxyV1.options.address,
+      { from: liquidatorAccount },
+    );
+  }
 };

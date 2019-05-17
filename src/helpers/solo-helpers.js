@@ -1,8 +1,5 @@
-import _ from 'lodash';
 import BigNumber from 'bignumber.js';
 import {
-  AmountDenomination,
-  AmountReference,
   ConfirmationType,
 } from '@dydxprotocol/solo/dist/js/src/types';
 import { DateTime } from 'luxon';
@@ -12,6 +9,8 @@ import { getGasPrice } from '../lib/gas-price';
 import Logger from '../lib/logger';
 
 const collateralPreferences = process.env.LIQUIDATION_COLLATERAL_PREFERENCES.split(',')
+  .map(pref => pref.trim());
+const owedPreferences = process.env.LIQUIDATION_OWED_PREFERENCES.split(',')
   .map(pref => pref.trim());
 
 export async function liquidateAccount(account) {
@@ -45,45 +44,23 @@ export async function liquidateAccount(account) {
     throw new Error('Supposedly liquidatable account has no collateral');
   }
 
-  const operation = solo.operation.initiate();
+  const gasPrice = getGasPrice();
 
-  const liquidations = [];
-
-  _.union(collateralPreferences, supplyMarkets).forEach((supplyMarketId) => {
-    if (supplyMarkets.includes(supplyMarketId)) {
-      borrowMarkets.forEach((borrowMarketId) => {
-        const liquidateArgs = {
-          primaryAccountOwner: process.env.LIQUIDATOR_ACCOUNT_OWNER,
-          primaryAccountId: new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER),
-          liquidMarketId: new BigNumber(borrowMarketId),
-          payoutMarketId: new BigNumber(supplyMarketId),
-          liquidAccountOwner: account.owner,
-          liquidAccountId: new BigNumber(account.number),
-          amount: {
-            value: new BigNumber(0),
-            denomination: AmountDenomination.Principal,
-            reference: AmountReference.Target,
-          },
-        };
-
-        operation.liquidate(liquidateArgs);
-        liquidations.push(liquidateArgs);
-      });
-    }
-  });
-
-  if (liquidations.length === 0) {
-    Logger.info({
-      at: 'solo-helpers#liquidateAccount',
-      message: 'Account has no liquidatable balances',
-      accountOwner: account.owner,
-      accountNumber: account.number,
-      accountUuid: account.uuid,
-    });
-    return undefined;
-  }
-
-  return commitLiquidation(account, operation, sender);
+  return solo.liquidatorProxy.liquidate(
+    process.env.LIQUIDATOR_ACCOUNT_OWNER,
+    new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER),
+    account.owner,
+    new BigNumber(account.number),
+    new BigNumber(process.env.MIN_LIQUIDATOR_ACCOUNT_COLLATERALIZATION),
+    new BigNumber(process.env.MIN_VALUE_LIQUIDATED),
+    owedPreferences.map(p => new BigNumber(p)),
+    collateralPreferences.map(p => new BigNumber(p)),
+    {
+      gasPrice,
+      from: sender,
+      confirmationType: ConfirmationType.Hash,
+    },
+  );
 }
 
 export async function liquidateExpiredAccount(account, markets) {

@@ -6,6 +6,7 @@ import AccountStore from '../src/lib/account-store';
 import MarketStore from '../src/lib/market-store';
 import LiquidationStore from '../src/lib/liquidation-store';
 import * as blockHelper from '../src/helpers/block-helper';
+import { solo } from '../src/helpers/solo';
 
 jest.mock('@dydxprotocol/solo/dist/js/src/modules/operate/AccountOperation');
 jest.mock('../src/helpers/block-helper');
@@ -44,9 +45,6 @@ describe('solo-liquidator', () => {
       const liquidations = [];
       const liquidateExpireds = [];
       AccountOperation.mockImplementation(() => ({
-        liquidate: (args) => {
-          liquidations.push(args);
-        },
         fullyLiquidateExpiredAccount: (...args) => {
           liquidateExpireds.push(args);
         },
@@ -55,29 +53,51 @@ describe('solo-liquidator', () => {
           return true;
         },
       }));
+      solo.liquidatorProxy.liquidate = jest.fn().mockImplementation(
+        (...args) => {
+          liquidations.push(args);
+          return { gas: 1 };
+        },
+      );
 
       await soloLiquidator._liquidateAccounts();
 
-      expect(commitCount).toBe(liquidatableAccounts.length + expiredAccounts.length);
+      expect(commitCount).toBe((expiredAccounts.length));
       expect(liquidations.length).toBe(liquidatableAccounts.length);
       expect(liquidateExpireds.length).toBe(expiredAccounts.length);
 
       const sortedLiquidations = liquidatableAccounts.map(account => liquidations.find(
-        l => l.liquidAccountOwner === account.owner
-        && l.liquidAccountId.toNumber() === account.number,
+        l => l[2] === account.owner
+        && l[3].toNumber() === account.number,
       ));
 
-      expect(sortedLiquidations[0].liquidMarketId.toNumber()).toBe(1);
-      expect(sortedLiquidations[0].payoutMarketId.toNumber()).toBe(0);
-      expect(sortedLiquidations[0].primaryAccountOwner).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);
-      expect(sortedLiquidations[0].primaryAccountId.toFixed())
+      expect(sortedLiquidations[0][0]).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);
+      expect(sortedLiquidations[0][1].toFixed())
         .toBe(process.env.LIQUIDATOR_ACCOUNT_NUMBER);
+      expect(sortedLiquidations[0][4].toFixed())
+        .toBe(process.env.MIN_LIQUIDATOR_ACCOUNT_COLLATERALIZATION);
+      expect(sortedLiquidations[0][5].toFixed())
+        .toBe(new BigNumber(process.env.MIN_VALUE_LIQUIDATED).toFixed());
+      expect(sortedLiquidations[0][6])
+        .toEqual(process.env.LIQUIDATION_OWED_PREFERENCES.split(',')
+          .map(p => new BigNumber(p)));
+      expect(sortedLiquidations[0][7])
+        .toEqual(process.env.LIQUIDATION_COLLATERAL_PREFERENCES.split(',')
+          .map(p => new BigNumber(p)));
 
-      expect(sortedLiquidations[1].liquidMarketId.toNumber()).toBe(0);
-      expect(sortedLiquidations[1].payoutMarketId.toNumber()).toBe(1);
-      expect(sortedLiquidations[1].primaryAccountOwner).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);
-      expect(sortedLiquidations[1].primaryAccountId.toFixed())
+      expect(sortedLiquidations[1][0]).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);
+      expect(sortedLiquidations[1][1].toFixed())
         .toBe(process.env.LIQUIDATOR_ACCOUNT_NUMBER);
+      expect(sortedLiquidations[1][4].toFixed())
+        .toBe(process.env.MIN_LIQUIDATOR_ACCOUNT_COLLATERALIZATION);
+      expect(sortedLiquidations[1][5].toFixed())
+        .toBe(new BigNumber(process.env.MIN_VALUE_LIQUIDATED).toFixed());
+      expect(sortedLiquidations[1][6])
+        .toEqual(process.env.LIQUIDATION_OWED_PREFERENCES.split(',')
+          .map(p => new BigNumber(p)));
+      expect(sortedLiquidations[1][7])
+        .toEqual(process.env.LIQUIDATION_COLLATERAL_PREFERENCES.split(',')
+          .map(p => new BigNumber(p)));
 
       const sortedExperies = expiredAccounts.map(account => liquidateExpireds.find(
         l => l[1].owner === account.owner

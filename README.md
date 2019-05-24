@@ -32,7 +32,7 @@ Requires a running [docker](https://docker.com) engine.
 docker run \
   -e LIQUIDATOR_ACCOUNT_OWNER=0x2c7536E3605D9C16a7a3D7b1898e529396a65c23 \
   -e LIQUIDATOR_ACCOUNT_OWNER_PRIVATE_KEY=0x4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318 \
-  dydxprotocol/liquidator 
+  dydxprotocol/liquidator
 ```
 
 ## Overview
@@ -100,3 +100,5 @@ Liquidator Account:
 |NETWORK_ID|Ethereum Network ID|
 |ACCOUNT_POLL_INTERVAL_MS|How frequently to poll for liquidatable accounts|
 |MARKET_POLL_INTERVAL_MS|How frequently to poll for market updates|
+|ENABLE_EXPIRATIONS|true or false - whether to liquidate expired accounts (false by default)|
+|EXPIRED_ACCOUNT_LIQUIDATION_DELAY_SECONDS|How long to wait before liquidating expired accounts. The spread for liquidating expired accounts ramps up linearly from 0% to 5% over 1 hour.|

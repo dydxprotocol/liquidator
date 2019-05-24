@@ -28,6 +28,8 @@ describe('solo-liquidator', () => {
 
   describe('#_liquidateAccounts', () => {
     it('Successfully liquidates accounts', async () => {
+      process.env.ENABLE_EXPIRATIONS = true;
+
       const liquidatableAccounts = getTestLiquidatableAccounts();
       const expiredAccounts = getTestExpiredAccounts();
       const markets = getTestMarkets();

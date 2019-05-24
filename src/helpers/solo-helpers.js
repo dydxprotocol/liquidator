@@ -64,6 +64,10 @@ export async function liquidateAccount(account) {
 }
 
 export async function liquidateExpiredAccount(account, markets) {
+  if (process.env.ENABLE_EXPIRATIONS !== 'true') {
+    return undefined;
+  }
+
   Logger.info({
     at: 'solo-helpers#liquidateExpiredAccount',
     message: 'Starting account expiry liquidation',
@@ -110,7 +114,10 @@ export async function liquidateExpiredAccount(account, markets) {
     const expiryTimestampBN = new BigNumber(Math.floor(expiryTimestamp.toMillis() / 1000));
     const lastBlockTimestampBN = new BigNumber(Math.floor(lastBlockTimestamp.toMillis() / 1000));
 
-    if (expiryTimestamp <= lastBlockTimestamp) {
+    if (
+      expiryTimestamp + Number(process.env.EXPIRED_ACCOUNT_LIQUIDATION_DELAY_SECONDS)
+      <= lastBlockTimestamp
+    ) {
       operation.fullyLiquidateExpiredAccount(
         {
           owner: process.env.LIQUIDATOR_ACCOUNT_OWNER,

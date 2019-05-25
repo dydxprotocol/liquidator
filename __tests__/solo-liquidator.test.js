@@ -42,6 +42,9 @@ describe('solo-liquidator', () => {
       marketStore.getMarkets = jest.fn().mockImplementation(
         () => markets,
       );
+      solo.getters.isAccountLiquidatable = jest.fn().mockImplementation(
+        () => true,
+      );
 
       let commitCount = 0;
       const liquidations = [];
@@ -102,14 +105,14 @@ describe('solo-liquidator', () => {
           .map(p => new BigNumber(p)));
 
       const sortedExperies = expiredAccounts.map(account => liquidateExpireds.find(
-        l => l[1].owner === account.owner
-        && l[1].number === account.number,
+        l => l[2] === account.owner
+        && l[3].eq(account.number),
       ));
 
-      expect(sortedExperies[0][2].eq(new BigNumber(0))).toBe(true);
-      expect(sortedExperies[0][0].owner).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);
-      expect(sortedExperies[0][0].number)
-        .toBe(process.env.LIQUIDATOR_ACCOUNT_NUMBER);
+      expect(sortedExperies[0][4].eq(new BigNumber(0))).toBe(true);
+      expect(sortedExperies[0][0]).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);
+      expect(sortedExperies[0][1])
+        .toEqual(new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER));
     });
   });
 });

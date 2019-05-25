@@ -22,6 +22,23 @@ export async function liquidateAccount(account) {
     accountUuid: account.uuid,
   });
 
+  const liquidatable = await solo.getters.isAccountLiquidatable(
+    account.owner,
+    new BigNumber(account.number),
+  );
+
+  if (!liquidatable) {
+    Logger.info({
+      at: 'solo-helpers#liquidateAccount',
+      message: 'Account is not liquidatable',
+      accountOwner: account.owner,
+      accountNumber: account.number,
+      accountUuid: account.uuid,
+    });
+
+    return undefined;
+  }
+
   const sender = process.env.LIQUIDATOR_ACCOUNT_OWNER;
   const borrowMarkets = [];
   const supplyMarkets = [];
@@ -110,6 +127,11 @@ export async function liquidateExpiredAccount(account, markets) {
       return;
     }
 
+    // Can't expire positive balances
+    if (!new BigNumber(balance.par).isNegative()) {
+      return;
+    }
+
     const expiryTimestamp = DateTime.fromISO(balance.expiresAt);
     const expiryTimestampBN = new BigNumber(Math.floor(expiryTimestamp.toMillis() / 1000));
     const lastBlockTimestampBN = new BigNumber(Math.floor(lastBlockTimestamp.toMillis() / 1000));
@@ -119,14 +141,10 @@ export async function liquidateExpiredAccount(account, markets) {
       <= lastBlockTimestamp
     ) {
       operation.fullyLiquidateExpiredAccount(
-        {
-          owner: process.env.LIQUIDATOR_ACCOUNT_OWNER,
-          number: process.env.LIQUIDATOR_ACCOUNT_NUMBER,
-        },
-        {
-          owner: account.owner,
-          number: account.number,
-        },
+        process.env.LIQUIDATOR_ACCOUNT_OWNER,
+        new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER),
+        account.owner,
+        new BigNumber(account.number),
         new BigNumber(marketId),
         expiryTimestampBN,
         lastBlockTimestampBN,

@@ -42,6 +42,9 @@ describe('solo-liquidator', () => {
       marketStore.getMarkets = jest.fn().mockImplementation(
         () => markets,
       );
+      solo.getters.isAccountLiquidatable = jest.fn().mockImplementation(
+        () => true,
+      );
 
       let commitCount = 0;
       const liquidations = [];

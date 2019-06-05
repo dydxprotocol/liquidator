@@ -76,7 +76,7 @@ Undercollateralized Account:
 
 Liquidator Account:
 ```
-+101.8375 ETH
++1.8375 ETH
 -1350 DAI
 ```
 
@@ -87,7 +87,7 @@ Liquidator Account:
 |ENV Variable|Description|
 |-|-|
 |LIQUIDATOR_ACCOUNT_OWNER|Ethereum address of the dYdX account owner that will do the liquidations
-|LIQUIDATOR_ACCOUNT_OWNER|Ethereum private key the dYdX account owner that will do the liquidations
+|LIQUIDATOR_ACCOUNT_OWNER_PRIVATE_KEY|Ethereum private key the dYdX account owner that will do the liquidations
 |LIQUIDATION_KEY_EXPIRATION_SEC|Amount of time in seconds to wait before trying to liquidate the same account again|300|
 |GAS_STATION_URL|URL of the gas station API to use
 |GAS_PRICE_MULTIPLIER|How much to multiply the `fast` gas price by when sending transactions

@@ -76,7 +76,7 @@ Undercollateralized Account:
 
 Liquidator Account:
 ```
-+1.8375 ETH
++101.8375 ETH
 -1350 DAI
 ```
 

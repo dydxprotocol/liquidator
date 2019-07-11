@@ -58,6 +58,7 @@ async function getGasPrices() {
   const response = await request({
     method: 'GET',
     uri: process.env.GAS_STATION_URL,
+    timeout: process.env.GAS_REQUEST_TIMEOUT_MS,
   });
   return JSON.parse(response);
 }

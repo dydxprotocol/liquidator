@@ -102,3 +102,4 @@ Liquidator Account:
 |MARKET_POLL_INTERVAL_MS|How frequently to poll for market updates|
 |ENABLE_EXPIRATIONS|true or false - whether to liquidate expired accounts (false by default)|
 |EXPIRED_ACCOUNT_LIQUIDATION_DELAY_SECONDS|How long to wait before liquidating expired accounts. The spread for liquidating expired accounts ramps up linearly from 0% to 5% over 1 hour.|
+|MIN_VALUE_LIQUIDATED|The minimum value in USD to liquidate (1 USD = 1e36)|

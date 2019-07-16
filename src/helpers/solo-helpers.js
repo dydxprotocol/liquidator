@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import {
   ConfirmationType,
-} from '@dydxprotocol/solo/dist/js/src/types';
+} from '@dydxprotocol/solo/dist/src/types';
 import { DateTime } from 'luxon';
 import { solo } from './solo';
 import { getLatestBlockTimestamp } from './block-helper';

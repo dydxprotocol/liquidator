@@ -1,9 +1,12 @@
 import { Web3, Solo } from '@dydxprotocol/solo';
 import Logger from '../lib/logger';
 
+const opts = { defaultAccount: process.env.LIQUIDATOR_ACCOUNT_OWNER };
+
 export const solo = new Solo(
   new Web3.providers.HttpProvider(process.env.ETHEREUM_NODE_URL),
   Number(process.env.NETWORK_ID),
+  opts,
 );
 
 export const loadAccounts = async () => {

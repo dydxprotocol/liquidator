@@ -132,6 +132,13 @@ export async function liquidateExpiredAccount(account, markets) {
       return;
     }
 
+    const isV2Expiry = (
+      (typeof balance.expiryAddress === 'string')
+      && (
+        balance.expiryAddress.toLowerCase()
+        === solo.contracts.expiryV2.options.address.toLowerCase()
+      )
+    );
     const expiryTimestamp = DateTime.fromISO(balance.expiresAt);
     const expiryTimestampBN = new BigNumber(Math.floor(expiryTimestamp.toMillis() / 1000));
     const lastBlockTimestampBN = new BigNumber(Math.floor(lastBlockTimestamp.toMillis() / 1000));
@@ -140,19 +147,35 @@ export async function liquidateExpiredAccount(account, markets) {
       expiryTimestamp + Number(process.env.EXPIRED_ACCOUNT_LIQUIDATION_DELAY_SECONDS)
       <= lastBlockTimestamp
     ) {
-      operation.fullyLiquidateExpiredAccount(
-        process.env.LIQUIDATOR_ACCOUNT_OWNER,
-        new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER),
-        account.owner,
-        new BigNumber(account.number),
-        new BigNumber(marketId),
-        expiryTimestampBN,
-        lastBlockTimestampBN,
-        weis,
-        prices,
-        spreadPremiums,
-        collateralPreferencesBN,
-      );
+      if (isV2Expiry) {
+        operation.fullyLiquidateExpiredAccountV2(
+          process.env.LIQUIDATOR_ACCOUNT_OWNER,
+          new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER),
+          account.owner,
+          new BigNumber(account.number),
+          new BigNumber(marketId),
+          expiryTimestampBN,
+          lastBlockTimestampBN,
+          weis,
+          prices,
+          spreadPremiums,
+          collateralPreferencesBN,
+        );
+      } else {
+        operation.fullyLiquidateExpiredAccount(
+          process.env.LIQUIDATOR_ACCOUNT_OWNER,
+          new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER),
+          account.owner,
+          new BigNumber(account.number),
+          new BigNumber(marketId),
+          expiryTimestampBN,
+          lastBlockTimestampBN,
+          weis,
+          prices,
+          spreadPremiums,
+          collateralPreferencesBN,
+        );
+      }
 
       expiredMarkets.push(marketId);
     }

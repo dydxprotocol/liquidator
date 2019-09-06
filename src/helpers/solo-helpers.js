@@ -132,13 +132,11 @@ export async function liquidateExpiredAccount(account, markets) {
       return;
     }
 
-    const isV2Expiry = (
-      (typeof balance.expiryAddress === 'string')
+    const isV2Expiry = balance.expiryAddress
       && (
         balance.expiryAddress.toLowerCase()
         === solo.contracts.expiryV2.options.address.toLowerCase()
-      )
-    );
+      );
     const expiryTimestamp = DateTime.fromISO(balance.expiresAt);
     const expiryTimestampBN = new BigNumber(Math.floor(expiryTimestamp.toMillis() / 1000));
     const lastBlockTimestampBN = new BigNumber(Math.floor(lastBlockTimestamp.toMillis() / 1000));

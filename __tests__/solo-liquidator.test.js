@@ -49,9 +49,13 @@ describe('solo-liquidator', () => {
       let commitCount = 0;
       const liquidations = [];
       const liquidateExpireds = [];
+      const liquidateExpiredV2s = [];
       AccountOperation.mockImplementation(() => ({
         fullyLiquidateExpiredAccount: (...args) => {
           liquidateExpireds.push(args);
+        },
+        fullyLiquidateExpiredAccountV2: (...args) => {
+          liquidateExpiredV2s.push(args);
         },
         commit: () => {
           commitCount += 1;
@@ -69,7 +73,9 @@ describe('solo-liquidator', () => {
 
       expect(commitCount).toBe((expiredAccounts.length));
       expect(liquidations.length).toBe(liquidatableAccounts.length);
-      expect(liquidateExpireds.length).toBe(expiredAccounts.length);
+      expect(liquidateExpireds.length + liquidateExpiredV2s.length).toBe(expiredAccounts.length);
+      expect(liquidateExpireds.length).toBe(1);
+      expect(liquidateExpiredV2s.length).toBe(1);
 
       const sortedLiquidations = liquidatableAccounts.map(account => liquidations.find(
         l => l[2] === account.owner
@@ -104,15 +110,17 @@ describe('solo-liquidator', () => {
         .toEqual(process.env.LIQUIDATION_COLLATERAL_PREFERENCES.split(',')
           .map(p => new BigNumber(p)));
 
-      const sortedExperies = expiredAccounts.map(account => liquidateExpireds.find(
-        l => l[2] === account.owner
-        && l[3].eq(account.number),
-      ));
-
-      expect(sortedExperies[0][4].eq(new BigNumber(0))).toBe(true);
-      expect(sortedExperies[0][0]).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);
-      expect(sortedExperies[0][1])
+      expect(liquidateExpireds[0][4].eq(new BigNumber(0))).toBe(true); // marketId
+      expect(liquidateExpireds[0][0]).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);
+      expect(liquidateExpireds[0][1])
         .toEqual(new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER));
+      expect(liquidateExpireds[0][3]).toEqual(new BigNumber(11)); // liquidAccountNumber
+
+      expect(liquidateExpiredV2s[0][4].eq(new BigNumber(2))).toBe(true); // marketId
+      expect(liquidateExpiredV2s[0][0]).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);
+      expect(liquidateExpiredV2s[0][1])
+        .toEqual(new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER));
+      expect(liquidateExpiredV2s[0][3]).toEqual(new BigNumber(22)); // liquidAccountNumber
     });
   });
 });
@@ -152,26 +160,62 @@ function getTestLiquidatableAccounts() {
   ];
 }
 
+const EXPIRY_V1_ADDRESS = '0x0ECE224FBC24D40B446c6a94a142dc41fAe76f2d';
+const EXPIRY_V2_ADDRESS = '0x739A1DF6725657f6a16dC2d5519DC36FD7911A12';
+
 function getTestExpiredAccounts() {
   return [
     {
-      uuid: '345',
+      uuid: '111',
       owner: '0x78F4529554137A9015dC653758aB600aBC2ffD48',
-      number: 45,
+      number: '11',
       balances: {
         0: {
           par: '-1010101010101010010101010010101010101001010',
           wei: '-2010101010101010010101010010101010101001010',
           expiresAt: DateTime.utc(1982, 5, 25).toISO(),
+          expiryAddress: null,
         },
         1: {
           par: '1010101010101010010101010010101010101001010',
           wei: '2010101010101010010101010010101010101001010',
+          expiresAt: null,
+          expiryAddress: null,
         },
         2: {
           par: '-1010101010101010010101010010101010101001010',
           wei: '-2010101010101010010101010010101010101001010',
           expiresAt: DateTime.utc(2050, 5, 25).toISO(),
+          expiryAddress: EXPIRY_V1_ADDRESS,
+        },
+        3: {
+          par: '-1010101010101010010101010010101010101001010',
+          wei: '-2010101010101010010101010010101010101001010',
+        },
+      },
+    },
+    {
+      uuid: '222',
+      owner: '0x78F4529554137A9015dC653758aB600aBC2ffD48',
+      number: '22',
+      balances: {
+        0: {
+          par: '-1010101010101010010101010010101010101001010',
+          wei: '-2010101010101010010101010010101010101001010',
+          expiresAt: DateTime.utc(2050, 5, 25).toISO(),
+          expiryAddress: EXPIRY_V2_ADDRESS,
+        },
+        1: {
+          par: '1010101010101010010101010010101010101001010',
+          wei: '2010101010101010010101010010101010101001010',
+          expiresAt: null,
+          expiryAddress: EXPIRY_V2_ADDRESS,
+        },
+        2: {
+          par: '-1010101010101010010101010010101010101001010',
+          wei: '-2010101010101010010101010010101010101001010',
+          expiresAt: DateTime.utc(1982, 5, 25).toISO(),
+          expiryAddress: EXPIRY_V2_ADDRESS,
         },
         3: {
           par: '-1010101010101010010101010010101010101001010',

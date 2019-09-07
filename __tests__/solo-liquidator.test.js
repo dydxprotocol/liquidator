@@ -160,9 +160,6 @@ function getTestLiquidatableAccounts() {
   ];
 }
 
-const EXPIRY_V1_ADDRESS = '0x0ECE224FBC24D40B446c6a94a142dc41fAe76f2d';
-const EXPIRY_V2_ADDRESS = '0x739A1DF6725657f6a16dC2d5519DC36FD7911A12';
-
 function getTestExpiredAccounts() {
   return [
     {
@@ -186,7 +183,7 @@ function getTestExpiredAccounts() {
           par: '-1010101010101010010101010010101010101001010',
           wei: '-2010101010101010010101010010101010101001010',
           expiresAt: DateTime.utc(2050, 5, 25).toISO(),
-          expiryAddress: EXPIRY_V1_ADDRESS,
+          expiryAddress: solo.contracts.expiry.options.address,
         },
         3: {
           par: '-1010101010101010010101010010101010101001010',
@@ -203,19 +200,19 @@ function getTestExpiredAccounts() {
           par: '-1010101010101010010101010010101010101001010',
           wei: '-2010101010101010010101010010101010101001010',
           expiresAt: DateTime.utc(2050, 5, 25).toISO(),
-          expiryAddress: EXPIRY_V2_ADDRESS,
+          expiryAddress: solo.contracts.expiryV2.options.address,
         },
         1: {
           par: '1010101010101010010101010010101010101001010',
           wei: '2010101010101010010101010010101010101001010',
           expiresAt: null,
-          expiryAddress: EXPIRY_V2_ADDRESS,
+          expiryAddress: solo.contracts.expiryV2.options.address,
         },
         2: {
           par: '-1010101010101010010101010010101010101001010',
           wei: '-2010101010101010010101010010101010101001010',
           expiresAt: DateTime.utc(1982, 5, 25).toISO(),
-          expiryAddress: EXPIRY_V2_ADDRESS,
+          expiryAddress: solo.contracts.expiryV2.options.address,
         },
         3: {
           par: '-1010101010101010010101010010101010101001010',

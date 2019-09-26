@@ -96,7 +96,7 @@ Liquidator Account:
 |LIQUIDATION_OWED_PREFERENCES|List of preferences for which markets to liquidate first on an account when liquidating|
 |LIQUIDATOR_ACCOUNT_NUMBER|The dYdX account number to use for the liquidating account (0 will show up on [trade.dydx.exchange/account](https://trade.dydx.exchange/account))|
 |MIN_LIQUIDATOR_ACCOUNT_COLLATERALIZATION|The desired minimum collateralization of the liquidator account after completing a liquidation. Prevents the liquidator account from being at risk of being liquidated itself if the price of assets continues to move in some direction. Higher values are safer. e.g. 0.5 = 150% collateralization|
-|ETHEREUM_NODE_URL|The URL of the Ethereum node to use|
+|ETHEREUM_NODE_URL|The URL of the Ethereum node to use. **We strongly recommend using your own Infura node since the default node can get overloaded during times of liquidation.**|
 |NETWORK_ID|Ethereum Network ID|
 |ACCOUNT_POLL_INTERVAL_MS|How frequently to poll for liquidatable accounts|
 |MARKET_POLL_INTERVAL_MS|How frequently to poll for market updates|

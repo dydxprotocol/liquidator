@@ -39,7 +39,7 @@ docker run \
 
 This service will automatically liquidate undercollateralized and expired Accounts on the [dYdX Solo Protocol](https://github.com/dydxprotocol/solo). Liquidations on dYdX happen internally between Accounts, so no actual ERC20 token movements occur.
 
-**In order to use this liquidator bot, you will need a funded dYdX Account. If you use the default of `LIQUIDATOR_ACCOUNT_NUMBER=0`, you can fund your dYdX Account on [trade.dydx.exchange/account](https://trade.dydx.exchange/account).**
+**In order to use this liquidator bot, you will need a funded dYdX Account. If you use the default of `LIQUIDATOR_ACCOUNT_NUMBER=0`, you can fund your dYdX Account on [trade.dydx.exchange/balances](https://trade.dydx.exchange/account).**
 
 Successfully liquidating Accounts will modify your dYdX Account balances. You can liquidate assets you do not have in your Account provided you have another asset as collateral, which will just cause your dYdX Account Balance to go negative in that asset.
 

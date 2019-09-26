@@ -37,6 +37,7 @@ export const loadAccounts = async () => {
   const isProxyAproved = await solo.getters.getIsLocalOperator(
     liquidatorAccount.address,
     solo.contracts.liquidatorProxyV1.options.address,
+    { from: liquidatorAccount.address },
   );
 
   if (!isProxyAproved) {

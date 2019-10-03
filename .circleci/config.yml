@@ -2,7 +2,7 @@ version: 2
 jobs:
   checkout_and_install:
     docker:
-      - image: dydxprotocol/node:8.12-alpine-v1
+      - image: dydxprotocol/node:10.16.3-alpine
     working_directory: ~/build
     steps:
       - checkout
@@ -24,7 +24,7 @@ jobs:
             - ~/build
   test:
     docker:
-      - image: dydxprotocol/node:8.12-alpine-v1
+      - image: dydxprotocol/node:10.16.3-alpine
     working_directory: ~/build
     steps:
       - restore_cache:
@@ -34,7 +34,7 @@ jobs:
           command: npm test
   lint:
     docker:
-      - image: dydxprotocol/node:8.12-alpine-v1
+      - image: dydxprotocol/node:10.16.3-alpine
     working_directory: ~/build
     steps:
       - restore_cache:
@@ -44,7 +44,7 @@ jobs:
           command: npm run lint
   build:
     docker:
-      - image: dydxprotocol/node:8.12-alpine-v1
+      - image: dydxprotocol/node:10.16.3-alpine
     working_directory: ~/build
     steps:
       - restore_cache:
@@ -58,7 +58,7 @@ jobs:
             - ~/build
   coverage:
     docker:
-      - image: dydxprotocol/node:8.12-alpine-v1
+      - image: dydxprotocol/node:10.16.3-alpine
     working_directory: ~/build
     steps:
       - restore_cache:

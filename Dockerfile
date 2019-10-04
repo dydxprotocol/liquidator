@@ -1,4 +1,4 @@
-FROM dydxprotocol/node:8.12-alpine-v1
+FROM dydxprotocol/node:10.16.3-alpine
 
 RUN adduser -S dydx
 RUN mkdir -p /home/dydx/app

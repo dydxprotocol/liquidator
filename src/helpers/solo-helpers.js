@@ -8,6 +8,7 @@ import { getLatestBlockTimestamp } from './block-helper';
 import { getGasPrice } from '../lib/gas-price';
 import Logger from '../lib/logger';
 
+const EXPIRATION_DELAY = Number(process.env.EXPIRED_ACCOUNT_LIQUIDATION_DELAY_SECONDS);
 const collateralPreferences = process.env.LIQUIDATION_COLLATERAL_PREFERENCES.split(',')
   .map(pref => pref.trim());
 const owedPreferences = process.env.LIQUIDATION_OWED_PREFERENCES.split(',')
@@ -140,42 +141,23 @@ export async function liquidateExpiredAccount(account, markets) {
     const expiryTimestamp = DateTime.fromISO(balance.expiresAt);
     const expiryTimestampBN = new BigNumber(Math.floor(expiryTimestamp.toMillis() / 1000));
     const lastBlockTimestampBN = new BigNumber(Math.floor(lastBlockTimestamp.toMillis() / 1000));
+    const delayHasPassed = expiryTimestamp + EXPIRATION_DELAY <= lastBlockTimestamp;
 
-    if (
-      expiryTimestamp + Number(process.env.EXPIRED_ACCOUNT_LIQUIDATION_DELAY_SECONDS)
-      <= lastBlockTimestamp
-    ) {
-      if (isV2Expiry) {
-        operation.fullyLiquidateExpiredAccountV2(
-          process.env.LIQUIDATOR_ACCOUNT_OWNER,
-          new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER),
-          account.owner,
-          new BigNumber(account.number),
-          new BigNumber(marketId),
-          expiryTimestampBN,
-          lastBlockTimestampBN,
-          weis,
-          prices,
-          spreadPremiums,
-          collateralPreferencesBN,
-        );
-      } else {
-        operation.fullyLiquidateExpiredAccount(
-          process.env.LIQUIDATOR_ACCOUNT_OWNER,
-          new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER),
-          account.owner,
-          new BigNumber(account.number),
-          new BigNumber(marketId),
-          expiryTimestampBN,
-          lastBlockTimestampBN,
-          weis,
-          prices,
-          spreadPremiums,
-          collateralPreferencesBN,
-        );
-      }
-
+    if (isV2Expiry && delayHasPassed) {
       expiredMarkets.push(marketId);
+      operation.fullyLiquidateExpiredAccountV2(
+        process.env.LIQUIDATOR_ACCOUNT_OWNER,
+        new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER),
+        account.owner,
+        new BigNumber(account.number),
+        new BigNumber(marketId),
+        expiryTimestampBN,
+        lastBlockTimestampBN,
+        weis,
+        prices,
+        spreadPremiums,
+        collateralPreferencesBN,
+      );
     }
   });
 

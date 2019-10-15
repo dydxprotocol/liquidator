@@ -48,11 +48,11 @@ describe('solo-liquidator', () => {
 
       let commitCount = 0;
       const liquidations = [];
-      const liquidateExpireds = [];
+      const liquidateExpiredV1s = [];
       const liquidateExpiredV2s = [];
       AccountOperation.mockImplementation(() => ({
         fullyLiquidateExpiredAccount: (...args) => {
-          liquidateExpireds.push(args);
+          liquidateExpiredV1s.push(args);
         },
         fullyLiquidateExpiredAccountV2: (...args) => {
           liquidateExpiredV2s.push(args);
@@ -71,10 +71,9 @@ describe('solo-liquidator', () => {
 
       await soloLiquidator._liquidateAccounts();
 
-      expect(commitCount).toBe((expiredAccounts.length));
       expect(liquidations.length).toBe(liquidatableAccounts.length);
-      expect(liquidateExpireds.length + liquidateExpiredV2s.length).toBe(expiredAccounts.length);
-      expect(liquidateExpireds.length).toBe(1);
+      expect(commitCount).toBe(liquidateExpiredV2s.length);
+      expect(liquidateExpiredV1s.length).toBe(0);
       expect(liquidateExpiredV2s.length).toBe(1);
 
       const sortedLiquidations = liquidatableAccounts.map(account => liquidations.find(
@@ -109,12 +108,6 @@ describe('solo-liquidator', () => {
       expect(sortedLiquidations[1][7])
         .toEqual(process.env.LIQUIDATION_COLLATERAL_PREFERENCES.split(',')
           .map(p => new BigNumber(p)));
-
-      expect(liquidateExpireds[0][4].eq(new BigNumber(0))).toBe(true); // marketId
-      expect(liquidateExpireds[0][0]).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);
-      expect(liquidateExpireds[0][1])
-        .toEqual(new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER));
-      expect(liquidateExpireds[0][3]).toEqual(new BigNumber(11)); // liquidAccountNumber
 
       expect(liquidateExpiredV2s[0][4].eq(new BigNumber(2))).toBe(true); // marketId
       expect(liquidateExpiredV2s[0][0]).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);

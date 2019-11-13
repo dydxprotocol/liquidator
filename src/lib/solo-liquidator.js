@@ -35,7 +35,7 @@ export default class SoloLiquidator {
     if (liquidatableAccounts.length === 0 && expiredAccounts.length === 0) {
       Logger.info({
         at: 'SoloLiquidator#_liquidateAccounts',
-        mesage: 'No accounts to liquidate',
+        message: 'No accounts to liquidate',
       });
       return;
     }

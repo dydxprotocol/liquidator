@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "noImplicitAny": true,
     "module": "commonjs",
     "sourceMap": true,
-    "strictNullChecks": true,
-    "jsx": "react"
+    "strictNullChecks": true
   },
   "exclude": [
     "node_modules"

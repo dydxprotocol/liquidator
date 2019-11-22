@@ -4,7 +4,7 @@ import Transport from 'winston-transport';
 const test = process.env.NODE_ENV === 'test';
 
 class StackTransport extends Transport {
-  log(info, callback) {
+  log(info: null | {error: {stack: Object}}, callback?: Function) {
     setImmediate(() => {
       if (info && info.error) {
         // eslint-disable-next-line
@@ -40,6 +40,9 @@ const transports = [
 
 if (!test || process.env.LOGS) {
   transports.push(
+    // @ts-ignore
+    // TODO savil. The type of StackTransport.log doesn't matc
+    // the type of ConsoleTransportInstance
     new winston.transports.Console({
       level: 'debug',
       handleExceptions: true,

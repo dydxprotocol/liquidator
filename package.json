@@ -27,6 +27,7 @@
   "homepage": "https://github.com/dydxprotocol/liquidator#readme",
   "dependencies": {
     "@dydxprotocol/solo": "^0.15.2",
+    "@types/request-promise-native": "^1.0.17",
     "bignumber.js": "^8.1.1",
     "dotenv-flow": "^0.4.0",
     "lodash": "^4.17.11",

@@ -12,3 +12,7 @@ build
 npm-debug.log
 consoleScripts.js
 .env.local
+
+# ignore js files produced by typescript compiler
+src/**/*.js.map
+src/**/*.js

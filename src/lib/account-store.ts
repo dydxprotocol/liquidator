@@ -1,8 +1,10 @@
-import { getLiquidatableAccounts, getExpiredAccounts } from '../clients/dydx';
+import { Account, getLiquidatableAccounts, getExpiredAccounts } from '../clients/dydx';
 import { delay } from './delay';
 import Logger from './logger';
 
 export default class AccountStore {
+  liquidatableAccounts: Array<Account>;
+  expiredAccounts: Array<Account>;
   constructor() {
     this.liquidatableAccounts = [];
     this.expiredAccounts = [];
@@ -12,14 +14,14 @@ export default class AccountStore {
 
   getExpiredAccounts = () => this.expiredAccounts;
 
-  containsLiquidatableAccount = (accountOwner, accountNumber) => this.liquidatableAccounts.find(
+  containsLiquidatableAccount = (accountOwner: string, accountNumber: string) => this.liquidatableAccounts.find(
     a => (
       a.owner.toLowerCase() === accountOwner.toLowerCase()
       && a.number === accountNumber
     ),
   );
 
-  containsExpiredAccount = (accountOwner, accountNumber) => this.expiredAccounts.find(
+  containsExpiredAccount = (accountOwner: string, accountNumber: string) => this.expiredAccounts.find(
     a => (
       a.owner.toLowerCase() === accountOwner.toLowerCase()
       && a.number === accountNumber
@@ -64,7 +66,10 @@ export default class AccountStore {
       getExpiredAccounts(),
     ]);
 
-    const allAccountUuids = {};
+    interface IAllAccountUuids {
+      [index: string]: boolean,
+    }
+    const allAccountUuids = {} as IAllAccountUuids;
 
     nextLiquidatableAccounts.forEach((next) => {
       allAccountUuids[next.uuid] = true;

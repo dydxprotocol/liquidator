@@ -1,43 +1,7 @@
-import { getMarkets } from '../clients/dydx';
+import { Market, getMarkets } from '../clients/dydx';
 import { delay } from './delay';
 import Logger from './logger';
 
-interface Currency {
-  uuid: string,
-  symbol: string,
-  contractAddress: string,
-  decimals: Number,
-  createdAt: string,
-  updatedAt: string,
-}
-
-interface Market {
-  id: Number,
-  name: string,
-  symbol: string,
-  supplyIndex: string,
-  borrowIndex: string,
-  supplyInterestRateSeconds: string,
-  borrowInterestRateSeconds: string,
-  totalSupplyPar: string,
-  totalBorrowPar: string,
-  lastIndexUpdateSeconds: string,
-  oraclePrice: string,
-  collateralRatio: string,
-  marginPremium: string,
-  spreadPremium: string,
-  currencyUuid: string,
-  createdAt: string,
-  updatedAt: string,
-  deletedAt: string | null,
-  currency: Currency,
-  totalSupplyAPR: string,
-  totalBorrowAPR: string,
-  totalSupplyAPY: string,
-  totalBorrowAPY: string,
-  totalSupplyWei: string,
-  totalBorrowWei: string,
-}
 
 export default class MarketStore {
 

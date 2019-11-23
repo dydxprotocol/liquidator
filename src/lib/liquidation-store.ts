@@ -1,13 +1,16 @@
 import LRU from 'lru-cache';
+import { Account } from '../clients/dydx';
 
 export default class LiquidationStore {
+  store: LRU<string, boolean>;
+
   constructor() {
     this.store = new LRU({
-      maxAge: process.env.LIQUIDATION_KEY_EXPIRATION_SEC * 1000,
+      maxAge: Number(process.env.LIQUIDATION_KEY_EXPIRATION_SEC) * 1000,
     });
   }
 
-  async add(account) {
+  async add(account: Account) {
     if (!account) {
       throw new Error('Must specify account');
     }
@@ -17,13 +20,13 @@ export default class LiquidationStore {
     this.store.set(key, true);
   }
 
-  contains(account) {
+  contains(account: Account) {
     const key = this._getKey(account);
 
     return this.store.get(key);
   }
 
-  _getKey(account) {
+  _getKey(account: Account) {
     return `${account.owner.toLowerCase()}-${account.number}`;
   }
 }

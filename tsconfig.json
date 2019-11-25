@@ -3,6 +3,7 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "module": "commonjs",
+    "outDir": "dist",
     "sourceMap": true,
     "strictNullChecks": true
   },

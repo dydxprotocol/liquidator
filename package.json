@@ -28,6 +28,7 @@
   "dependencies": {
     "@dydxprotocol/solo": "^0.15.2",
     "@types/lru-cache": "^5.1.0",
+    "@types/luxon": "^1.21.0",
     "@types/request-promise-native": "^1.0.17",
     "bignumber.js": "^8.1.1",
     "dotenv-flow": "^0.4.0",

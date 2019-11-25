@@ -4,25 +4,25 @@ import Logger from '../lib/logger';
 const opts = { defaultAccount: process.env.LIQUIDATOR_ACCOUNT_OWNER };
 
 export const solo = new Solo(
-  new Web3.providers.HttpProvider(process.env.ETHEREUM_NODE_URL),
-  Number(process.env.NETWORK_ID),
+  new Web3.providers.HttpProvider(process.env.ETHEREUM_NODE_URL!),
+  Number(process.env.NETWORK_ID!),
   opts,
 );
 
 export const loadAccounts = async () => {
   const liquidatorAccount = solo.web3.eth.accounts.wallet.add(
-    process.env.LIQUIDATOR_ACCOUNT_OWNER_PRIVATE_KEY,
+    process.env.LIQUIDATOR_ACCOUNT_OWNER_PRIVATE_KEY!,
   );
 
   if (
     !liquidatorAccount.address
     || liquidatorAccount.address.toLowerCase()
-        !== process.env.LIQUIDATOR_ACCOUNT_OWNER.toLowerCase()
+        !== process.env.LIQUIDATOR_ACCOUNT_OWNER!.toLowerCase()
   ) {
     Logger.error({
       at: 'solo#loadAccounts',
       message: 'Owner private key does not match address',
-      expected: process.env.LIQUIDATOR_ACCOUNT_OWNER,
+      expected: process.env.LIQUIDATOR_ACCOUNT_OWNER!,
       got: liquidatorAccount.address,
       error: new Error('Owner private key does not match address'),
     });

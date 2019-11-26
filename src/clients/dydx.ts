@@ -39,6 +39,10 @@ export interface Market {
 
 export interface Balance {
   // TODO fill this in
+  expiryAddress: string | null,
+  expiresAt: string | null,
+  par: string,
+  wei: string,
 }
 
 export interface Account {

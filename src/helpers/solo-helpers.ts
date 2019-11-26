@@ -7,14 +7,15 @@ import { solo } from './solo';
 import { getLatestBlockTimestamp } from './block-helper';
 import { getGasPrice } from '../lib/gas-price';
 import Logger from '../lib/logger';
+import { Account, Market } from '../clients/dydx';
 
 const EXPIRATION_DELAY = Number(process.env.EXPIRED_ACCOUNT_LIQUIDATION_DELAY_SECONDS);
-const collateralPreferences = process.env.LIQUIDATION_COLLATERAL_PREFERENCES.split(',')
+const collateralPreferences = process.env.LIQUIDATION_COLLATERAL_PREFERENCES!.split(',')
   .map(pref => pref.trim());
-const owedPreferences = process.env.LIQUIDATION_OWED_PREFERENCES.split(',')
+const owedPreferences = process.env.LIQUIDATION_OWED_PREFERENCES!.split(',')
   .map(pref => pref.trim());
 
-export async function liquidateAccount(account) {
+export async function liquidateAccount(account: Account) {
   Logger.info({
     at: 'solo-helpers#liquidateAccount',
     message: 'Starting account liquidation',
@@ -65,12 +66,12 @@ export async function liquidateAccount(account) {
   const gasPrice = getGasPrice();
 
   return solo.liquidatorProxy.liquidate(
-    process.env.LIQUIDATOR_ACCOUNT_OWNER,
-    new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER),
+    process.env.LIQUIDATOR_ACCOUNT_OWNER!,
+    new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER!),
     account.owner,
     new BigNumber(account.number),
-    new BigNumber(process.env.MIN_LIQUIDATOR_ACCOUNT_COLLATERALIZATION),
-    new BigNumber(process.env.MIN_VALUE_LIQUIDATED),
+    new BigNumber(process.env.MIN_LIQUIDATOR_ACCOUNT_COLLATERALIZATION!),
+    new BigNumber(process.env.MIN_VALUE_LIQUIDATED!),
     owedPreferences.map(p => new BigNumber(p)),
     collateralPreferences.map(p => new BigNumber(p)),
     {
@@ -81,7 +82,7 @@ export async function liquidateAccount(account) {
   );
 }
 
-export async function liquidateExpiredAccount(account, markets) {
+export async function liquidateExpiredAccount(account: Account, markets: Array<Market>) {
   if (process.env.ENABLE_EXPIRATIONS !== 'true') {
     return undefined;
   }
@@ -94,15 +95,15 @@ export async function liquidateExpiredAccount(account, markets) {
     accountUuid: account.uuid,
   });
 
-  const sender = process.env.LIQUIDATOR_ACCOUNT_OWNER;
+  const sender = process.env.LIQUIDATOR_ACCOUNT_OWNER!;
   const lastBlockTimestamp = await getLatestBlockTimestamp();
 
   const expiredMarkets = [];
   const operation = solo.operation.initiate();
 
-  const weis = [];
-  const prices = [];
-  const spreadPremiums = [];
+  const weis: Array<BigNumber> = [];
+  const prices: Array<BigNumber> = [];
+  const spreadPremiums: Array<BigNumber> = [];
   const collateralPreferencesBN = collateralPreferences.map(p => new BigNumber(p));
 
   for (let i = 0; i < collateralPreferences.length; i += 1) {
@@ -115,6 +116,9 @@ export async function liquidateExpiredAccount(account, markets) {
     }
 
     const market = markets.find(m => m.id === i);
+    if (market === undefined) {
+      throw "didn't find market for id: " + i;
+    }
 
     prices.push(new BigNumber(market.oraclePrice));
     spreadPremiums.push(new BigNumber(market.spreadPremium));
@@ -140,14 +144,17 @@ export async function liquidateExpiredAccount(account, markets) {
       );
     const expiryTimestamp = DateTime.fromISO(balance.expiresAt);
     const expiryTimestampBN = new BigNumber(Math.floor(expiryTimestamp.toMillis() / 1000));
-    const lastBlockTimestampBN = new BigNumber(Math.floor(lastBlockTimestamp.toMillis() / 1000));
+    const lastBlockTimestampBN = new BigNumber(Math.floor(lastBlockTimestamp!.toMillis() / 1000));
+    // @ts-ignore TODO FIXME: expiryTimestamp is a DateTime object, and
+    // the plus-operator doesn't apply. Probably use:
+    // expiryTimestamp.plus(Duration.fromObject({seconds: EXPIRATION_DELAY})) <= lastBlockTimestamp
     const delayHasPassed = expiryTimestamp + EXPIRATION_DELAY <= lastBlockTimestamp;
 
     if (isV2Expiry && delayHasPassed) {
       expiredMarkets.push(marketId);
       operation.fullyLiquidateExpiredAccountV2(
-        process.env.LIQUIDATOR_ACCOUNT_OWNER,
-        new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER),
+        process.env.LIQUIDATOR_ACCOUNT_OWNER!,
+        new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER!),
         account.owner,
         new BigNumber(account.number),
         new BigNumber(marketId),
@@ -168,7 +175,10 @@ export async function liquidateExpiredAccount(account, markets) {
   return commitLiquidation(account, operation, sender);
 }
 
-async function commitLiquidation(account, operation, sender) {
+// @ts-ignore TODO FIXME. I _think_ operation should be type AccountOperation
+// but that is not provided in the types. Could that be because the
+// @dydxprotocol/solo library used is version 0.15.2 (OLD!)
+async function commitLiquidation(account: Account, operation, sender: string) {
   const gasPrice = getGasPrice();
 
   Logger.info({

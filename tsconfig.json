@@ -3,11 +3,16 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "module": "commonjs",
+    // Babel transforms the files, so tsc neeedn't emit
+    "noEmit": true,
     "outDir": "dist",
     "sourceMap": true,
     "strictNullChecks": true
   },
   "exclude": [
     "node_modules"
+  ],
+  "include": [
+    "src"
   ]
 }

@@ -7,6 +7,7 @@
     "babel-node": "babel-node",
     "dev": "NODE_ENV=development nodemon -e .js -w src --exec npm run babel-node -- src/index.js",
     "test": "NODE_ENV=test jest --runInBand --forceExit",
+    "typecheck": "npx tsc -w",
     "coverage": "NODE_ENV=test jest --coverage --runInBand --forceExit",
     "build": "./node_modules/.bin/babel src --presets @babel/preset-typescript --extensions \".ts\" --out-dir build/ --source-maps inline",
     "start": "node build/index.js",

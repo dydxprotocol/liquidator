@@ -41,8 +41,8 @@ const transports = [
 if (!test || process.env.LOGS) {
   transports.push(
     // @ts-ignore
-    // TODO savil. The type of StackTransport.log doesn't matc
-    // the type of ConsoleTransportInstance
+    // TODO FIXME. The type of StackTransport.log doesn't match
+    // the type of ConsoleTransportInstance.
     new winston.transports.Console({
       level: 'debug',
       handleExceptions: true,

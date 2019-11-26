@@ -1,13 +1,6 @@
-interface IncludesFn {
-  (msgSubstring: string): boolean,
-}
-
-interface ErrorMessage {
-  includes: IncludesFn,
-}
-
 interface Error {
-  message: ErrorMessage,
+  // returns an object with an includes() method
+  message: {includes: (msgSubstring: string) => boolean},
 }
 
 export function isDuplicateTxError(error: Error) {

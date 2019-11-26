@@ -177,7 +177,7 @@ export async function liquidateExpiredAccount(account: Account, markets: Array<M
 
 // @ts-ignore TODO FIXME. I _think_ operation should be type AccountOperation
 // but that is not provided in the types. Could that be because the
-// @dydxprotocol/solo library used is version 0.15.2 (OLD!)
+// @dydxprotocol/solo library used is version 0.15.2 (OLD!)? Not sure.
 async function commitLiquidation(account: Account, operation, sender: string) {
   const gasPrice = getGasPrice();
 

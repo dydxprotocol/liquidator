@@ -1,15 +1,15 @@
 import { DateTime } from 'luxon';
 import BigNumber from 'bignumber.js';
 import { AccountOperation } from '@dydxprotocol/solo/dist/src/modules/operate/AccountOperation';
-import SoloLiquidator from '../src/lib/solo-liquidator';
-import AccountStore from '../src/lib/account-store';
-import MarketStore from '../src/lib/market-store';
-import LiquidationStore from '../src/lib/liquidation-store';
-import * as blockHelper from '../src/helpers/block-helper';
-import { solo } from '../src/helpers/solo';
+import SoloLiquidator from '../build/lib/solo-liquidator';
+import AccountStore from '../build/lib/account-store';
+import MarketStore from '../build/lib/market-store';
+import LiquidationStore from '../build/lib/liquidation-store';
+import * as blockHelper from '../build/helpers/block-helper';
+import { solo } from '../build/helpers/solo';
 
 jest.mock('@dydxprotocol/solo/dist/src/modules/operate/AccountOperation');
-jest.mock('../src/helpers/block-helper');
+jest.mock('../build/helpers/block-helper');
 
 describe('solo-liquidator', () => {
   let accountStore;

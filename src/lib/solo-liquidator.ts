@@ -1,9 +1,19 @@
 import { liquidateAccount, liquidateExpiredAccount } from '../helpers/solo-helpers';
 import Logger from './logger';
 import { delay } from './delay';
+import AccountStore from './account-store';
+import MarketStore from './market-store';
+import LiquidationStore from './liquidation-store';
 
 export default class SoloLiquidator {
-  constructor(accountStore, marketStore, liquidationStore) {
+  accountStore: AccountStore;
+  marketStore: MarketStore;
+  liquidationStore: LiquidationStore;
+  constructor(
+    accountStore: AccountStore,
+    marketStore: MarketStore,
+    liquidationStore: LiquidationStore,
+  ) {
     this.accountStore = accountStore;
     this.marketStore = marketStore;
     this.liquidationStore = liquidationStore;

@@ -86,8 +86,9 @@ Liquidator Account:
 
 |ENV Variable|Description|
 |-|-|
-|LIQUIDATOR_ACCOUNT_OWNER|Ethereum address of the dYdX account owner that will do the liquidations
-|LIQUIDATOR_ACCOUNT_OWNER_PRIVATE_KEY|Ethereum private key the dYdX account owner that will do the liquidations|
+|LIQUIDATOR_ACCOUNT_OWNER|**REQUIRED** Ethereum address of the dYdX account owner that will do the liquidations
+|LIQUIDATOR_ACCOUNT_OWNER_PRIVATE_KEY|**REQUIRED** Ethereum private key the dYdX account owner that will do the liquidations|
+|ETHEREUM_NODE_URL|**REQUIRED** The URL of the Ethereum node to use (e.g. an infura url)|
 |LIQUIDATION_KEY_EXPIRATION_SEC|Amount of time in seconds to wait before trying to liquidate the same account again|300|
 |GAS_STATION_URL|URL of the gas station API to use|
 |GAS_PRICE_MULTIPLIER|How much to multiply the `fast` gas price by when sending transactions|
@@ -96,7 +97,6 @@ Liquidator Account:
 |LIQUIDATION_OWED_PREFERENCES|List of preferences for which markets to liquidate first on an account when liquidating|
 |LIQUIDATOR_ACCOUNT_NUMBER|The dYdX account number to use for the liquidating account (0 will show up on [trade.dydx.exchange/account](https://trade.dydx.exchange/account))|
 |MIN_LIQUIDATOR_ACCOUNT_COLLATERALIZATION|The desired minimum collateralization of the liquidator account after completing a liquidation. Prevents the liquidator account from being at risk of being liquidated itself if the price of assets continues to move in some direction. Higher values are safer. e.g. 0.5 = 150% collateralization|
-|ETHEREUM_NODE_URL|The URL of the Ethereum node to use. **We strongly recommend using your own Infura node since the default node can get overloaded during times of liquidation.**|
 |NETWORK_ID|Ethereum Network ID|
 |ACCOUNT_POLL_INTERVAL_MS|How frequently to poll for liquidatable accounts|
 |MARKET_POLL_INTERVAL_MS|How frequently to poll for market updates|

@@ -233,5 +233,10 @@ function getTestMarkets() {
       oraclePrice: '985976069960621971',
       spreadPremium: '0',
     },
+    {
+      id: 3,
+      oraclePrice: '985976069960621971',
+      spreadPremium: '0',
+    },
   ];
 }

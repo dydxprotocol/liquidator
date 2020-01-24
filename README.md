@@ -88,7 +88,7 @@ Liquidator Account:
 |ENV Variable|Description|
 |-|-|
 |LIQUIDATOR_ACCOUNT_OWNER|**REQUIRED** Ethereum address of the dYdX account owner that will do the liquidations
-|LIQUIDATOR_ACCOUNT_OWNER_PRIVATE_KEY|**REQUIRED** Ethereum private key the dYdX account owner that will do the liquidations|
+|LIQUIDATOR_ACCOUNT_OWNER_PRIVATE_KEY|**REQUIRED** Ethereum private key the dYdX account owner that will do the liquidations. Make sure that "0x" is at the start of it (MetaMask exports private keys without it).|
 |ETHEREUM_NODE_URL|**REQUIRED** The URL of the Ethereum node to use (e.g. an infura url)|
 |LIQUIDATION_KEY_EXPIRATION_SEC|Amount of time in seconds to wait before trying to liquidate the same account again|300|
 |GAS_STATION_URL|URL of the gas station API to use|

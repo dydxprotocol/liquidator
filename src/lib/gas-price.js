@@ -34,7 +34,12 @@ export async function updateGasPrice() {
     throw new Error('GAS_PRICE_MULTIPLIER not specified');
   }
 
-  const totalWei = `${Math.round(Number(fast) * multiplier * 100000000)}`;
+  const addition = Number(process.env.GAS_PRICE_ADDITION || 0);
+  if (Number.isNaN(addition)) {
+    throw new Error('GAS_PRICE_ADDITION is invalid');
+  }
+
+  const totalWei = `${Math.round((Number(fast) * multiplier * 100000000) + addition)}`;
 
   Logger.info({
     at: 'updateGasPrice',

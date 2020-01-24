@@ -96,7 +96,7 @@ Liquidator Account:
 |GAS_PRICE_UPDATE_FREQUENCY_SEC|How frequently to update the gas price|
 |LIQUIDATION_COLLATERAL_PREFERENCES|List of preferences for which collateral markets to receive first when liquidating|
 |LIQUIDATION_OWED_PREFERENCES|List of preferences for which markets to liquidate first on an account when liquidating|
-|LIQUIDATOR_ACCOUNT_NUMBER|The dYdX account number to use for the liquidating account (0 will show up on [trade.dydx.exchange/account](https://trade.dydx.exchange/account))|
+|LIQUIDATOR_ACCOUNT_NUMBER|The dYdX account number to use for the liquidating account. If you're not sure what this is, use 0. This will show up on [trade.dydx.exchange/account](https://trade.dydx.exchange/account) if you connect with the same wallet.|
 |MIN_LIQUIDATOR_ACCOUNT_COLLATERALIZATION|The desired minimum collateralization of the liquidator account after completing a liquidation. Prevents the liquidator account from being at risk of being liquidated itself if the price of assets continues to move in some direction. Higher values are safer. e.g. 0.5 = 150% collateralization|
 |NETWORK_ID|Ethereum Network ID|
 |ACCOUNT_POLL_INTERVAL_MS|How frequently to poll for liquidatable accounts|

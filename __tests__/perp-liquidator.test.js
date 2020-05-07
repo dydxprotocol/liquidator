@@ -2,22 +2,21 @@ import BigNumber from 'bignumber.js';
 import PerpLiquidator from '../src/lib/perp-liquidator';
 import AccountStore from '../src/lib/account-store';
 import MarketStore from '../src/lib/market-store';
+import LiquidationStore from '../src/lib/liquidation-store';
 import { perp } from '../src/helpers/web3';
-
-process.env.PERP_LIQUIDATIONS_ENABLED = true;
-
-jest.mock('../src/helpers/block-helper');
 
 describe('perp-liquidator', () => {
   let accountStore;
   let marketStore;
   let perpLiquidator;
+  let liquidationStore;
 
   beforeEach(async () => {
     jest.clearAllMocks();
     accountStore = new AccountStore();
     marketStore = new MarketStore();
-    perpLiquidator = new PerpLiquidator(accountStore, marketStore);
+    liquidationStore = new LiquidationStore();
+    perpLiquidator = new PerpLiquidator(accountStore, marketStore, liquidationStore);
   });
 
   describe('#_liquidateAccounts', () => {
@@ -55,9 +54,10 @@ describe('perp-liquidator', () => {
         const liq = liquidations[i];
         const acc = liquidatableAccounts[i];
         const position = new BigNumber(acc.position);
+        const isBuy = position.gt(0);
         expect(liq.liquidatee).toEqual(acc.owner);
-        expect(liq.maxPosition).toEqual(new BigNumber(position.gt(0) ? '30e6' : '-20e6'));
-        expect(liq.isBuy).toEqual(position.gt(0));
+        expect(liq.maxPosition).toEqual(new BigNumber(isBuy ? '30e6' : '-20e6'));
+        expect(liq.isBuy).toEqual(isBuy);
       }
     });
   });

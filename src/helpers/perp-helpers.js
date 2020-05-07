@@ -16,7 +16,7 @@ export async function liquidatePerpetualAccount(maxPosPosition, maxNegPosition, 
   const maxPosition = isBuy ? maxPosPosition : maxNegPosition;
   const gasPrice = getGasPrice();
 
-  const response = perp.liquidatorProxy.liquidate(
+  const response = await perp.liquidatorProxy.liquidate(
     account.owner,
     isBuy,
     maxPosition,

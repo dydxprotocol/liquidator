@@ -26,11 +26,11 @@ export default class SoloLiquidator {
   }
 
   _liquidateAccounts = async () => {
-    const liquidatableAccounts = this.accountStore.getLiquidatableAccounts()
+    const liquidatableAccounts = this.accountStore.getLiquidatableSoloAccounts()
       .filter(a => !this.liquidationStore.contains(a));
     const expiredAccounts = this.accountStore.getExpiredAccounts()
       .filter(a => !this.liquidationStore.contains(a));
-    const markets = this.marketStore.getMarkets();
+    const markets = this.marketStore.getSoloMarkets();
 
     if (liquidatableAccounts.length === 0 && expiredAccounts.length === 0) {
       Logger.info({

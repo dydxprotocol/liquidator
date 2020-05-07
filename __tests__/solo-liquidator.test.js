@@ -6,7 +6,7 @@ import AccountStore from '../src/lib/account-store';
 import MarketStore from '../src/lib/market-store';
 import LiquidationStore from '../src/lib/liquidation-store';
 import * as blockHelper from '../src/helpers/block-helper';
-import { solo } from '../src/helpers/solo';
+import { solo } from '../src/helpers/web3';
 
 jest.mock('@dydxprotocol/solo/dist/src/modules/operate/AccountOperation');
 jest.mock('../src/helpers/block-helper');
@@ -28,18 +28,18 @@ describe('solo-liquidator', () => {
 
   describe('#_liquidateAccounts', () => {
     it('Successfully liquidates accounts', async () => {
-      process.env.ENABLE_EXPIRATIONS = true;
+      process.env.SOLO_EXPIRATIONS_ENABLED = true;
 
       const liquidatableAccounts = getTestLiquidatableAccounts();
       const expiredAccounts = getTestExpiredAccounts();
       const markets = getTestMarkets();
-      accountStore.getLiquidatableAccounts = jest.fn().mockImplementation(
+      accountStore.getLiquidatableSoloAccounts = jest.fn().mockImplementation(
         () => liquidatableAccounts,
       );
       accountStore.getExpiredAccounts = jest.fn().mockImplementation(
         () => expiredAccounts,
       );
-      marketStore.getMarkets = jest.fn().mockImplementation(
+      marketStore.getSoloMarkets = jest.fn().mockImplementation(
         () => markets,
       );
       solo.getters.isAccountLiquidatable = jest.fn().mockImplementation(
@@ -81,38 +81,38 @@ describe('solo-liquidator', () => {
         && l[3].toNumber() === account.number,
       ));
 
-      expect(sortedLiquidations[0][0]).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);
+      expect(sortedLiquidations[0][0]).toBe(process.env.WALLET_ADDRESS);
       expect(sortedLiquidations[0][1].toFixed())
-        .toBe(process.env.LIQUIDATOR_ACCOUNT_NUMBER);
+        .toBe(process.env.SOLO_ACCOUNT_NUMBER);
       expect(sortedLiquidations[0][4].toFixed())
-        .toBe(process.env.MIN_LIQUIDATOR_ACCOUNT_COLLATERALIZATION);
+        .toBe(process.env.SOLO_MIN_ACCOUNT_COLLATERALIZATION);
       expect(sortedLiquidations[0][5].toFixed())
         .toBe(new BigNumber(process.env.MIN_VALUE_LIQUIDATED).toFixed());
       expect(sortedLiquidations[0][6])
-        .toEqual(process.env.LIQUIDATION_OWED_PREFERENCES.split(',')
+        .toEqual(process.env.SOLO_OWED_PREFERENCES.split(',')
           .map(p => new BigNumber(p)));
       expect(sortedLiquidations[0][7])
-        .toEqual(process.env.LIQUIDATION_COLLATERAL_PREFERENCES.split(',')
+        .toEqual(process.env.SOLO_COLLATERAL_PREFERENCES.split(',')
           .map(p => new BigNumber(p)));
 
-      expect(sortedLiquidations[1][0]).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);
+      expect(sortedLiquidations[1][0]).toBe(process.env.WALLET_ADDRESS);
       expect(sortedLiquidations[1][1].toFixed())
-        .toBe(process.env.LIQUIDATOR_ACCOUNT_NUMBER);
+        .toBe(process.env.SOLO_ACCOUNT_NUMBER);
       expect(sortedLiquidations[1][4].toFixed())
-        .toBe(process.env.MIN_LIQUIDATOR_ACCOUNT_COLLATERALIZATION);
+        .toBe(process.env.SOLO_MIN_ACCOUNT_COLLATERALIZATION);
       expect(sortedLiquidations[1][5].toFixed())
         .toBe(new BigNumber(process.env.MIN_VALUE_LIQUIDATED).toFixed());
       expect(sortedLiquidations[1][6])
-        .toEqual(process.env.LIQUIDATION_OWED_PREFERENCES.split(',')
+        .toEqual(process.env.SOLO_OWED_PREFERENCES.split(',')
           .map(p => new BigNumber(p)));
       expect(sortedLiquidations[1][7])
-        .toEqual(process.env.LIQUIDATION_COLLATERAL_PREFERENCES.split(',')
+        .toEqual(process.env.SOLO_COLLATERAL_PREFERENCES.split(',')
           .map(p => new BigNumber(p)));
 
       expect(liquidateExpiredV2s[0][4].eq(new BigNumber(2))).toBe(true); // marketId
-      expect(liquidateExpiredV2s[0][0]).toBe(process.env.LIQUIDATOR_ACCOUNT_OWNER);
+      expect(liquidateExpiredV2s[0][0]).toBe(process.env.WALLET_ADDRESS);
       expect(liquidateExpiredV2s[0][1])
-        .toEqual(new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER));
+        .toEqual(new BigNumber(process.env.SOLO_ACCOUNT_NUMBER));
       expect(liquidateExpiredV2s[0][3]).toEqual(new BigNumber(22)); // liquidAccountNumber
     });
   });

@@ -1,30 +1,27 @@
-import { getLiquidatableAccounts, getExpiredAccounts } from '../clients/dydx';
+import {
+  getPerpAccountBalances,
+  getLiquidatablePerpAccounts,
+  getLiquidatableSoloAccounts,
+  getExpiredAccounts,
+} from '../clients/dydx';
 import { delay } from './delay';
 import Logger from './logger';
 
 export default class AccountStore {
   constructor() {
-    this.liquidatableAccounts = [];
+    this.perpLiquidatorAccountBalances = [];
+    this.liquidatablePerpAccounts = [];
+    this.liquidatableSoloAccounts = [];
     this.expiredAccounts = [];
   }
 
-  getLiquidatableAccounts = () => this.liquidatableAccounts;
+  getPerpLiquidatorAccountBalances = () => this.perpLiquidatorAccountBalances;
+
+  getLiquidatablePerpAccounts = () => this.liquidatablePerpAccounts;
+
+  getLiquidatableSoloAccounts = () => this.liquidatableSoloAccounts;
 
   getExpiredAccounts = () => this.expiredAccounts;
-
-  containsLiquidatableAccount = (accountOwner, accountNumber) => this.liquidatableAccounts.find(
-    a => (
-      a.owner.toLowerCase() === accountOwner.toLowerCase()
-      && a.number === accountNumber
-    ),
-  );
-
-  containsExpiredAccount = (accountOwner, accountNumber) => this.expiredAccounts.find(
-    a => (
-      a.owner.toLowerCase() === accountOwner.toLowerCase()
-      && a.number === accountNumber
-    ),
-  );
 
   start = () => {
     Logger.info({
@@ -57,68 +54,25 @@ export default class AccountStore {
     });
 
     const [
-      { accounts: nextLiquidatableAccounts },
+      { balances: nextPerpLiquidatorAccountBalances },
+      { accounts: nextLiquidatablePerpAccounts },
+      { accounts: nextLiquidatableSoloAccounts },
       { accounts: nextExpiredAccounts },
     ] = await Promise.all([
-      getLiquidatableAccounts(),
+      getPerpAccountBalances(process.env.WALLET_ADDRESS),
+      getLiquidatablePerpAccounts(),
+      getLiquidatableSoloAccounts(),
       getExpiredAccounts(),
     ]);
 
-    const allAccountUuids = {};
-
-    nextLiquidatableAccounts.forEach((next) => {
-      allAccountUuids[next.uuid] = true;
-
-      if (!this.liquidatableAccounts.find(e => next.uuid === e.uuid)) {
-        Logger.info({
-          at: 'AccountStore#_update',
-          message: 'Adding new liquidatable account',
-          uuid: next.uuid,
-          owner: next.owner,
-          number: next.number,
-        });
-      }
-    });
-
     // Do not put an account in both liquidatable and expired
-    const filteredNextExpiredAccounts = nextExpiredAccounts.filter(a => !allAccountUuids[a.uuid]);
+    const filteredNextExpiredAccounts = nextExpiredAccounts.filter(
+      ea => !nextLiquidatableSoloAccounts.find(la => la.uuid === ea.uuid),
+    );
 
-    filteredNextExpiredAccounts.forEach((next) => {
-      if (!this.expiredAccounts.find(e => next.uuid === e.uuid)) {
-        Logger.info({
-          at: 'AccountStore#_update',
-          message: 'Adding new expired account',
-          uuid: next.uuid,
-          owner: next.owner,
-          number: next.number,
-        });
-      }
-    });
-
-    this.liquidatableAccounts.forEach((next) => {
-      if (!nextLiquidatableAccounts.find(e => next.uuid === e.uuid)) {
-        Logger.info({
-          at: 'AccountStore#_update',
-          message: 'Removing liquidatable account',
-          uuid: next.uuid,
-          owner: next.owner,
-          number: next.number,
-        });
-      }
-    });
-    this.expiredAccounts.forEach((next) => {
-      if (!filteredNextExpiredAccounts.find(e => next.uuid === e.uuid)) {
-        Logger.info({
-          at: 'AccountStore#_update',
-          message: 'Removing expired account',
-          uuid: next.uuid,
-          owner: next.owner,
-          number: next.number,
-        });
-      }
-    });
-
-    this.liquidatableAccounts = nextLiquidatableAccounts;
+    this.perpLiquidatorAccountBalances = nextPerpLiquidatorAccountBalances;
+    this.liquidatablePerpAccounts = nextLiquidatablePerpAccounts;
+    this.liquidatableSoloAccounts = nextLiquidatableSoloAccounts;
     this.expiredAccounts = filteredNextExpiredAccounts;
 
     Logger.info({

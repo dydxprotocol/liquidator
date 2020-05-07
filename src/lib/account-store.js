@@ -9,13 +9,13 @@ import Logger from './logger';
 
 export default class AccountStore {
   constructor() {
-    this.perpLiquidatorAccountBalances = [];
+    this.liquidatorPerpBalances = [];
     this.liquidatablePerpAccounts = [];
     this.liquidatableSoloAccounts = [];
     this.expiredAccounts = [];
   }
 
-  getPerpLiquidatorAccountBalances = () => this.perpLiquidatorAccountBalances;
+  getLiquidatorPerpBalances = () => this.liquidatorPerpBalances;
 
   getLiquidatablePerpAccounts = () => this.liquidatablePerpAccounts;
 
@@ -54,7 +54,7 @@ export default class AccountStore {
     });
 
     const [
-      { balances: nextPerpLiquidatorAccountBalances },
+      { balances: nextLiquidatorPerpBalances },
       { accounts: nextLiquidatablePerpAccounts },
       { accounts: nextLiquidatableSoloAccounts },
       { accounts: nextExpiredAccounts },
@@ -70,7 +70,7 @@ export default class AccountStore {
       ea => !nextLiquidatableSoloAccounts.find(la => la.uuid === ea.uuid),
     );
 
-    this.perpLiquidatorAccountBalances = nextPerpLiquidatorAccountBalances;
+    this.liquidatorPerpBalances = nextLiquidatorPerpBalances;
     this.liquidatablePerpAccounts = nextLiquidatablePerpAccounts;
     this.liquidatableSoloAccounts = nextLiquidatableSoloAccounts;
     this.expiredAccounts = filteredNextExpiredAccounts;

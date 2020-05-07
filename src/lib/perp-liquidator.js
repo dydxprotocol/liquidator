@@ -66,7 +66,7 @@ export default class PerpLiquidator {
 
     await Promise.all(liquidatableAccounts.map(async (account) => {
       try {
-        await liquidatePerpetualAccount(account, maxNegPosition, maxPosPosition);
+        await liquidatePerpetualAccount(maxPosPosition, maxNegPosition, account);
       } catch (error) {
         Logger.error({
           ...error.trace,

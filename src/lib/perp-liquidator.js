@@ -27,10 +27,6 @@ export default class PerpLiquidator {
   }
 
   _liquidateAccounts = async () => {
-    if (process.env.PERP_LIQUIDATIONS_ENABLED !== 'true') {
-      return;
-    }
-
     const liquidatableAccounts = this.accountStore.getLiquidatablePerpAccounts()
       .filter(a => !this.liquidationStore.contains(a));
 

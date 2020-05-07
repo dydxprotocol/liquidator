@@ -4,6 +4,8 @@ import AccountStore from '../src/lib/account-store';
 import MarketStore from '../src/lib/market-store';
 import { perp } from '../src/helpers/web3';
 
+process.env.PERP_LIQUIDATIONS_ENABLED = true;
+
 jest.mock('../src/helpers/block-helper');
 
 describe('perp-liquidator', () => {

@@ -32,7 +32,10 @@ Requires a running [docker](https://docker.com) engine.
 docker run \
   -e WALLET_ADDRESS=0x2c7536E3605D9C16a7a3D7b1898e529396a65c23 \
   -e WALLET_PRIVATE_KEY=0x4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318 \
-  -e ETHEREUM_NODE_URL=mainnet.infura.io/v3/YOUR_INFURA_KEY \
+  -e ETHEREUM_NODE_URL=https://mainnet.infura.io/v3/YOUR_INFURA_KEY \
+  -e SOLO_LIQUIDATIONS_ENABLED=true \
+  -e PERP_LIQUIDATIONS_ENABLED=true \
+  -e SOLO_EXPIRATIONS_ENABLED=false \
   dydxprotocol/liquidator
 ```
 

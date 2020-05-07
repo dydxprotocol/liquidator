@@ -36,9 +36,18 @@ async function start() {
 
   accountStore.start();
   marketStore.start();
-  soloLiquidator.start();
-  perpLiquidator.start();
   gasPriceUpdater.start();
+
+  if (
+    process.env.SOLO_LIQUIDATIONS_ENABLED === 'true'
+    || process.env.SOLO_EXPIRATIONS_ENABLED === 'true'
+  ) {
+    soloLiquidator.start();
+  }
+
+  if (process.env.PERP_LIQUIDATIONS_ENABLED === 'true') {
+    perpLiquidator.start();
+  }
 }
 
 start();

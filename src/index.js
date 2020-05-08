@@ -6,8 +6,9 @@ import AccountStore from './lib/account-store';
 import MarketStore from './lib/market-store';
 import LiquidationStore from './lib/liquidation-store';
 import SoloLiquidator from './lib/solo-liquidator';
+import PerpLiquidator from './lib/perp-liquidator';
 import GasPriceUpdater from './lib/gas-price-updater';
-import { loadAccounts } from './helpers/solo';
+import { loadAccounts, initializeSoloLiquidations } from './helpers/web3';
 
 console.log(`Starting in env ${process.env.NODE_ENV}`);
 
@@ -24,14 +25,29 @@ async function start() {
   const marketStore = new MarketStore();
   const liquidationStore = new LiquidationStore();
   const soloLiquidator = new SoloLiquidator(accountStore, marketStore, liquidationStore);
+  const perpLiquidator = new PerpLiquidator(accountStore, marketStore, liquidationStore);
   const gasPriceUpdater = new GasPriceUpdater();
 
   await loadAccounts();
 
+  if (process.env.SOLO_LIQUIDATIONS_ENABLED === 'true') {
+    await initializeSoloLiquidations();
+  }
+
   accountStore.start();
   marketStore.start();
-  soloLiquidator.start();
   gasPriceUpdater.start();
+
+  if (
+    process.env.SOLO_LIQUIDATIONS_ENABLED === 'true'
+    || process.env.SOLO_EXPIRATIONS_ENABLED === 'true'
+  ) {
+    soloLiquidator.start();
+  }
+
+  if (process.env.PERP_LIQUIDATIONS_ENABLED === 'true') {
+    perpLiquidator.start();
+  }
 }
 
 start();

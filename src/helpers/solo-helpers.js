@@ -3,18 +3,22 @@ import {
   ConfirmationType,
 } from '@dydxprotocol/solo/dist/src/types';
 import { DateTime } from 'luxon';
-import { solo } from './solo';
+import { solo } from './web3';
 import { getLatestBlockTimestamp } from './block-helper';
 import { getGasPrice } from '../lib/gas-price';
 import Logger from '../lib/logger';
 
-const EXPIRATION_DELAY = Number(process.env.EXPIRED_ACCOUNT_LIQUIDATION_DELAY_SECONDS);
-const collateralPreferences = process.env.LIQUIDATION_COLLATERAL_PREFERENCES.split(',')
+const EXPIRATION_DELAY = Number(process.env.SOLO_EXPIRED_ACCOUNT_DELAY_SECONDS);
+const collateralPreferences = process.env.SOLO_COLLATERAL_PREFERENCES.split(',')
   .map(pref => pref.trim());
-const owedPreferences = process.env.LIQUIDATION_OWED_PREFERENCES.split(',')
+const owedPreferences = process.env.SOLO_OWED_PREFERENCES.split(',')
   .map(pref => pref.trim());
 
 export async function liquidateAccount(account) {
+  if (process.env.SOLO_LIQUIDATIONS_ENABLED !== 'true') {
+    return undefined;
+  }
+
   Logger.info({
     at: 'solo-helpers#liquidateAccount',
     message: 'Starting account liquidation',
@@ -40,7 +44,7 @@ export async function liquidateAccount(account) {
     return undefined;
   }
 
-  const sender = process.env.LIQUIDATOR_ACCOUNT_OWNER;
+  const sender = process.env.WALLET_ADDRESS;
   const borrowMarkets = [];
   const supplyMarkets = [];
 
@@ -65,12 +69,12 @@ export async function liquidateAccount(account) {
   const gasPrice = getGasPrice();
 
   return solo.liquidatorProxy.liquidate(
-    process.env.LIQUIDATOR_ACCOUNT_OWNER,
-    new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER),
+    process.env.WALLET_ADDRESS,
+    new BigNumber(process.env.SOLO_ACCOUNT_NUMBER),
     account.owner,
     new BigNumber(account.number),
-    new BigNumber(process.env.MIN_LIQUIDATOR_ACCOUNT_COLLATERALIZATION),
-    new BigNumber(process.env.MIN_VALUE_LIQUIDATED),
+    new BigNumber(process.env.SOLO_MIN_ACCOUNT_COLLATERALIZATION),
+    new BigNumber(process.env.SOLO_MIN_OVERHEAD_VALUE),
     owedPreferences.map(p => new BigNumber(p)),
     collateralPreferences.map(p => new BigNumber(p)),
     {
@@ -82,7 +86,7 @@ export async function liquidateAccount(account) {
 }
 
 export async function liquidateExpiredAccount(account, markets) {
-  if (process.env.ENABLE_EXPIRATIONS !== 'true') {
+  if (process.env.SOLO_EXPIRATIONS_ENABLED !== 'true') {
     return undefined;
   }
 
@@ -94,7 +98,7 @@ export async function liquidateExpiredAccount(account, markets) {
     accountUuid: account.uuid,
   });
 
-  const sender = process.env.LIQUIDATOR_ACCOUNT_OWNER;
+  const sender = process.env.WALLET_ADDRESS;
   const lastBlockTimestamp = await getLatestBlockTimestamp();
 
   const expiredMarkets = [];
@@ -146,8 +150,8 @@ export async function liquidateExpiredAccount(account, markets) {
     if (isV2Expiry && delayHasPassed) {
       expiredMarkets.push(marketId);
       operation.fullyLiquidateExpiredAccountV2(
-        process.env.LIQUIDATOR_ACCOUNT_OWNER,
-        new BigNumber(process.env.LIQUIDATOR_ACCOUNT_NUMBER),
+        process.env.WALLET_ADDRESS,
+        new BigNumber(process.env.SOLO_ACCOUNT_NUMBER),
         account.owner,
         new BigNumber(account.number),
         new BigNumber(marketId),

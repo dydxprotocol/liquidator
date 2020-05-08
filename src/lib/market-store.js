@@ -1,13 +1,16 @@
-import { getMarkets } from '../clients/dydx';
+import { getPerpMarkets, getSoloMarkets } from '../clients/dydx';
 import { delay } from './delay';
 import Logger from './logger';
 
 export default class MarketStore {
   constructor() {
-    this.markets = [];
+    this.soloMarkets = [];
+    this.perpMarkets = [];
   }
 
-  getMarkets = () => this.markets;
+  getSoloMarkets = () => this.soloMarkets;
+
+  getPerpMarkets = () => this.perpMarkets;
 
   start = () => {
     Logger.info({
@@ -39,9 +42,16 @@ export default class MarketStore {
       message: 'Updating markets...',
     });
 
-    const { markets: nextMarkets } = await getMarkets();
+    const [
+      { markets: nextSoloMarkets },
+      { markets: nextPerpMarkets },
+    ] = await Promise.all([
+      getSoloMarkets(),
+      getPerpMarkets(),
+    ]);
 
-    this.markets = nextMarkets;
+    this.soloMarkets = nextSoloMarkets;
+    this.perpMarkets = nextPerpMarkets;
 
     Logger.info({
       at: 'MarketStore#_update',

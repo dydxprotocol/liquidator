@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { solo } from './solo';
+import { solo } from './web3';
 import Logger from '../lib/logger';
 
 let lastBlockTimestamp = 0;

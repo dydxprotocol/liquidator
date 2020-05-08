@@ -1,7 +1,7 @@
 import request from 'request-promise-native';
 import Logger from './logger';
 
-let lastPrice = process.env.INITIAL_GAS_PRICE;
+let lastPrice = process.env.GAS_INITIAL_PRICE;
 
 /**
  * the gas price returned from the API gives the gas prices by gwei*10 for some reason

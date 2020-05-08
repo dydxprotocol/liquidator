@@ -43,9 +43,7 @@ docker run \
 
 This service will automatically liquidate undercollateralized and/or expired accounts on dYdX.
 
-This bot works for Solo (Margin-Trading) and/or Perp (Perpetual Market) accounts. so no actual ERC20 token movements occur.
-
-Use the envvars `SOLO_LIQUIDATIONS_ENABLED`, `SOLO_EXPIRATIONS_ENABLED`, `PERP_LIQUIDATIONS_ENABLED` to control what kind of liquidations to perform.
+This bot works for Solo (Margin-Trading) and/or Perp (Perpetual Market) accounts. Use the envvars `SOLO_LIQUIDATIONS_ENABLED`, `SOLO_EXPIRATIONS_ENABLED`, `PERP_LIQUIDATIONS_ENABLED` to control what kind of liquidations to perform.
 
 **Liquidations on dYdX happen internally between Accounts, so you will need an already-funded dYdX Account to use this liquidator bot. If you use the default of `SOLO_ACCOUNT_NUMBER=0`, you can fund your dYdX Margin (Solo) or Perpetual (Perp) Account on [trade.dydx.exchange/balances](https://trade.dydx.exchange/balances).**
 

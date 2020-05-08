@@ -18,6 +18,24 @@ export const perp = new Perpetual(
 );
 
 export async function loadAccounts() {
+  if (!process.env.WALLET_PRIVATE_KEY) {
+    Logger.error({
+      at: 'web3#loadAccounts',
+      message: 'WALLET_PRIVATE_KEY is not provided',
+      error: new Error('WALLET_PRIVATE_KEY is not provided'),
+    });
+    return;
+  }
+
+  if (!process.env.WALLET_ADDRESS) {
+    Logger.error({
+      at: 'web3#loadAccounts',
+      message: 'WALLET_ADDRESS is not provided',
+      error: new Error('WALLET_ADDRESS is not provided'),
+    });
+    return;
+  }
+
   const soloAccount = solo.web3.eth.accounts.wallet.add(
     process.env.WALLET_PRIVATE_KEY,
   );

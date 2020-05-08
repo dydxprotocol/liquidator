@@ -41,13 +41,17 @@ docker run \
 
 ## Overview
 
-This service will automatically liquidate undercollateralized and expired Accounts on the [dYdX Solo Protocol](https://github.com/dydxprotocol/solo). Liquidations on dYdX happen internally between Accounts, so no actual ERC20 token movements occur.
+This service will automatically liquidate undercollateralized and/or expired accounts on dYdX.
 
-**In order to use this liquidator bot, you will need a funded dYdX Account. If you use the default of `SOLO_ACCOUNT_NUMBER=0`, you can fund your dYdX Account on [trade.dydx.exchange/balances](https://trade.dydx.exchange/account).**
+This bot works for Solo (Margin-Trading) and/or Perp (Perpetual Market) accounts. so no actual ERC20 token movements occur.
+
+Use the envvars `SOLO_LIQUIDATIONS_ENABLED`, `SOLO_EXPIRATIONS_ENABLED`, `PERP_LIQUIDATIONS_ENABLED` to control what kind of liquidations to perform.
+
+**Liquidations on dYdX happen internally between Accounts, so you will need an already-funded dYdX Account to use this liquidator bot. If you use the default of `SOLO_ACCOUNT_NUMBER=0`, you can fund your dYdX Margin (Solo) or Perpetual (Perp) Account on [trade.dydx.exchange/balances](https://trade.dydx.exchange/balances).**
 
 Successfully liquidating Accounts will modify your dYdX Account balances. You can liquidate assets you do not have in your Account provided you have another asset as collateral, which will just cause your dYdX Account Balance to go negative in that asset.
 
-### Liquidation Mechanics
+### Solo Liquidations
 Liquidations on Solo reward a 5% spread on top of the current oracle prices for the assets being liquidated and used as collateral. Example:
 
 Undercollateralized Account:
@@ -63,7 +67,6 @@ Liquidator Account:
 ```
 
 Oracle Prices:
-
 ```
 ETH Oracle Price: $200
 DAI Oracle Price: $1
@@ -82,6 +85,45 @@ Liquidator Account:
 ```
 +101.8375 ETH
 -1350 DAI
+```
+
+### Perp Liquidations
+Perp Liquidations allow the liquidator to fully subsume any account with a collateralization that falls below 107.5%. After the liquidation, 20% of any profits go towards a dYdX insurance fund that prevents deleveraging.
+
+Undercollateralized Account:
+```
++2.1  Position (BTC)
+-200  Margin (USDC)
+```
+
+Liquidator Account:
+```
++0    Position (BTC)
++1000 Margin (USDC)
+```
+
+Oracle Prices:
+```
+BTC Oracle Price: 100 USDC per BTC
+```
+
+Fully liquidating the undercollateralized account would allow the account to be fully taken over by the Liquidator. Since the "value" of the account was `2.1 BTC  * (100 USDC/BTC) - 200 USDC = 10 USDC`, 20% of that profit then goes to the insurance pool. After the liquidation the account balances would be:
+
+Liquidated Account:
+```
++0    Position (BTC)
++0    Margin (USDC)
+```
+
+Liquidator Account:
+```
++2.1  Position (BTC)
++798  Margin (USDC)
+```
+
+Insurance Fund:
+```
++2   Margin (USDC)
 ```
 
 ## Configuration

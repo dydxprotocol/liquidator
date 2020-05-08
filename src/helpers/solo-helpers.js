@@ -74,7 +74,7 @@ export async function liquidateAccount(account) {
     account.owner,
     new BigNumber(account.number),
     new BigNumber(process.env.SOLO_MIN_ACCOUNT_COLLATERALIZATION),
-    new BigNumber(process.env.MIN_VALUE_LIQUIDATED),
+    new BigNumber(process.env.SOLO_MIN_OVERHEAD_VALUE),
     owedPreferences.map(p => new BigNumber(p)),
     collateralPreferences.map(p => new BigNumber(p)),
     {

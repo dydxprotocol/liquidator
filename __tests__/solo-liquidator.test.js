@@ -87,7 +87,7 @@ describe('solo-liquidator', () => {
       expect(sortedLiquidations[0][4].toFixed())
         .toBe(process.env.SOLO_MIN_ACCOUNT_COLLATERALIZATION);
       expect(sortedLiquidations[0][5].toFixed())
-        .toBe(new BigNumber(process.env.MIN_VALUE_LIQUIDATED).toFixed());
+        .toBe(new BigNumber(process.env.SOLO_MIN_OVERHEAD_VALUE).toFixed());
       expect(sortedLiquidations[0][6])
         .toEqual(process.env.SOLO_OWED_PREFERENCES.split(',')
           .map(p => new BigNumber(p)));
@@ -101,7 +101,7 @@ describe('solo-liquidator', () => {
       expect(sortedLiquidations[1][4].toFixed())
         .toBe(process.env.SOLO_MIN_ACCOUNT_COLLATERALIZATION);
       expect(sortedLiquidations[1][5].toFixed())
-        .toBe(new BigNumber(process.env.MIN_VALUE_LIQUIDATED).toFixed());
+        .toBe(new BigNumber(process.env.SOLO_MIN_OVERHEAD_VALUE).toFixed());
       expect(sortedLiquidations[1][6])
         .toEqual(process.env.SOLO_OWED_PREFERENCES.split(',')
           .map(p => new BigNumber(p)));

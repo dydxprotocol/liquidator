@@ -92,20 +92,21 @@ Liquidator Account:
 |-|-|
 |WALLET_ADDRESS|**REQUIRED** Ethereum address of the dYdX account owner that will do the liquidations
 |WALLET_PRIVATE_KEY|**REQUIRED** Ethereum private key the dYdX account owner that will do the liquidations. Make sure that "0x" is at the start of it (MetaMask exports private keys without it).|
+|NETWORK_ID|Ethereum Network ID|
 |ETHEREUM_NODE_URL|**REQUIRED** The URL of the Ethereum node to use (e.g. an infura url)|
 |LIQUIDATION_KEY_EXPIRATION_SEC|Amount of time in seconds to wait before trying to liquidate the same account again|300|
 |GAS_STATION_URL|URL of the gas station API to use|
 |GAS_PRICE_MULTIPLIER|How much to multiply the `fast` gas price by when sending transactions|
 |GAS_PRICE_UPDATE_FREQUENCY_SEC|How frequently to update the gas price|
+|SOLO_LIQUIDATIONS_ENABLED|true or false - whether to liquidate solo accounts (true by default)|
+|SOLO_EXPIRATIONS_ENABLED|true or false - whether to liquidate expired accounts (false by default)|
 |SOLO_COLLATERAL_PREFERENCES|List of preferences for which collateral markets to receive first when liquidating|
 |SOLO_OWED_PREFERENCES|List of preferences for which markets to liquidate first on an account when liquidating|
 |SOLO_ACCOUNT_NUMBER|The dYdX account number to use for the liquidating account. If you're not sure what this is, use 0. This will show up on [trade.dydx.exchange/account](https://trade.dydx.exchange/account) if you connect with the same wallet.|
 |SOLO_MIN_ACCOUNT_COLLATERALIZATION|The desired minimum collateralization of the liquidator account after completing a liquidation. Prevents the liquidator account from being at risk of being liquidated itself if the price of assets continues to move in some direction. Higher values are safer. e.g. 0.5 = 150% collateralization|
-|NETWORK_ID|Ethereum Network ID|
+|SOLO_MIN_OVERHEAD_VALUE|If you can liquidate less than this amount of value before hitting `SOLO_MIN_ACCOUNT_COLLATERALIZATION`, then don't liquidate. (1 USD = 1e36)|
+|SOLO_EXPIRED_ACCOUNT_DELAY_SECONDS|How long to wait before liquidating expired accounts. The spread for liquidating expired accounts ramps up linearly from 0% to 5% over 1 hour.|
+|PERP_LIQUIDATIONS_ENABLED|true or false - whether to liquidate perpetual accounts (false by default)|
+|PERP_MIN_ACCOUNT_COLLATERALIZATION|The desired minimum collateralization of the liquidator account after completing a perpetual liquidation. Higher values are safer. e.g. 0.5 = 150% collateralization|
 |ACCOUNT_POLL_INTERVAL_MS|How frequently to poll for liquidatable accounts|
 |MARKET_POLL_INTERVAL_MS|How frequently to poll for market updates|
-|SOLO_LIQUIDATIONS_ENABLED|true or false - whether to liquidate solo accounts (true by default)|
-|SOLO_EXPIRATIONS_ENABLED|true or false - whether to liquidate expired accounts (false by default)|
-|ENABLE_PERP_LIQUIDATIONS|true or false - whether to liquidate perpetual accounts (false by default)|
-|SOLO_EXPIRED_ACCOUNT_DELAY_SECONDS|How long to wait before liquidating expired accounts. The spread for liquidating expired accounts ramps up linearly from 0% to 5% over 1 hour.|
-|MIN_VALUE_LIQUIDATED|The minimum value in USD to liquidate (1 USD = 1e36)|

@@ -35,9 +35,10 @@ describe('perp-liquidator', () => {
       const liquidations = [];
 
       perp.liquidatorProxy.liquidate = jest.fn().mockImplementation(
-        (liquidatee, isBuy, maxPosition, options) => {
+        (liquidatee, liquidator, isBuy, maxPosition, options) => {
           liquidations.push({
             liquidatee,
+            liquidator,
             isBuy,
             maxPosition,
             options,
@@ -56,6 +57,7 @@ describe('perp-liquidator', () => {
         const position = new BigNumber(acc.position);
         const isBuy = position.gt(0);
         expect(liq.liquidatee).toEqual(acc.owner);
+        expect(liq.liquidator).toEqual(process.env.WALLET_ADDRESS);
         expect(liq.maxPosition).toEqual(new BigNumber(isBuy ? '30e6' : '-20e6'));
         expect(liq.isBuy).toEqual(isBuy);
       }

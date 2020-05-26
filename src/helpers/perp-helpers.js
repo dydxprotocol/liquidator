@@ -18,6 +18,7 @@ export async function liquidatePerpetualAccount(maxPosPosition, maxNegPosition, 
 
   const response = await perp.liquidatorProxy.liquidate(
     account.owner,
+    process.env.WALLET_ADDRESS,
     isBuy,
     maxPosition,
     {

@@ -51,9 +51,6 @@ describe('solo-liquidator', () => {
       const liquidateExpiredV1s = [];
       const liquidateExpiredV2s = [];
       AccountOperation.mockImplementation(() => ({
-        fullyLiquidateExpiredAccount: (...args) => {
-          liquidateExpiredV1s.push(args);
-        },
         fullyLiquidateExpiredAccountV2: (...args) => {
           liquidateExpiredV2s.push(args);
         },

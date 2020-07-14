@@ -8,7 +8,6 @@ import { getLatestBlockTimestamp } from './block-helper';
 import { getGasPrice } from '../lib/gas-price';
 import Logger from '../lib/logger';
 
-const EXPIRATION_DELAY = Number(process.env.SOLO_EXPIRED_ACCOUNT_DELAY_SECONDS);
 const collateralPreferences = process.env.SOLO_COLLATERAL_PREFERENCES.split(',')
   .map(pref => pref.trim());
 const owedPreferences = process.env.SOLO_OWED_PREFERENCES.split(',')
@@ -145,7 +144,8 @@ export async function liquidateExpiredAccount(account, markets) {
     const expiryTimestamp = DateTime.fromISO(balance.expiresAt);
     const expiryTimestampBN = new BigNumber(Math.floor(expiryTimestamp.toMillis() / 1000));
     const lastBlockTimestampBN = new BigNumber(Math.floor(lastBlockTimestamp.toMillis() / 1000));
-    const delayHasPassed = expiryTimestamp + EXPIRATION_DELAY <= lastBlockTimestamp;
+    const delayHasPassed = expiryTimestampBN.plus(process.env.SOLO_EXPIRED_ACCOUNT_DELAY_SECONDS)
+      .lte(lastBlockTimestampBN);
 
     if (isV2Expiry && delayHasPassed) {
       expiredMarkets.push(marketId);

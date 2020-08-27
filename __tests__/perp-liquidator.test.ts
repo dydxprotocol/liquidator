@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import { BigNumber } from '@dydxprotocol/perpetual';
 import PerpLiquidator from '../src/lib/perp-liquidator';
 import AccountStore from '../src/lib/account-store';
 import MarketStore from '../src/lib/market-store';
@@ -32,7 +32,7 @@ describe('perp-liquidator', () => {
         () => getTestPerpMarkets(),
       );
 
-      const liquidations = [];
+      const liquidations: any[] = [];
 
       perp.liquidatorProxy.liquidate = jest.fn().mockImplementation(
         (liquidatee, liquidator, isBuy, maxPosition, options) => {

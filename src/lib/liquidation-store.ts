@@ -1,9 +1,11 @@
 import LRU from 'lru-cache';
 
 export default class LiquidationStore {
+  public store: LRU;
+
   constructor() {
     this.store = new LRU({
-      maxAge: process.env.LIQUIDATION_KEY_EXPIRATION_SEC * 1000,
+      maxAge: Number(process.env.LIQUIDATION_KEY_EXPIRATION_SEC) * 1000,
     });
   }
 

@@ -1,10 +1,22 @@
-import BigNumber from 'bignumber.js';
+import { BigNumber } from '@dydxprotocol/perpetual';
 import { liquidatePerpetualAccount } from '../helpers/perp-helpers';
 import Logger from './logger';
 import { delay } from './delay';
+import AccountStore from './account-store';
+import LiquidationStore from './liquidation-store';
+import MarketStore from './market-store';
 
 export default class PerpLiquidator {
-  constructor(accountStore, marketStore, liquidationStore) {
+
+  public accountStore: AccountStore;
+  public marketStore: MarketStore;
+  public liquidationStore: LiquidationStore;
+
+  constructor(
+    accountStore: AccountStore,
+    marketStore: MarketStore,
+    liquidationStore: LiquidationStore,
+  ) {
     this.accountStore = accountStore;
     this.marketStore = marketStore;
     this.liquidationStore = liquidationStore;

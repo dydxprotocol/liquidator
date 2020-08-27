@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "lib": [
+      "es2015",
+      "es2016",
+      "es2017",
+      "dom"
+    ],
+    "outDir": "build",
+    "types": [
+      "node",
+      "jest",
+    ],
+    "skipLibCheck": true,
+    "declaration": true,
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "inlineSourceMap": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "strict": true
+  },
+  "compileOnSave": true,
+  "include": [
+    "__tests__/**/*.ts",
+    "src/**/*.ts",
+    "environment.d.ts",
+  ],
+}

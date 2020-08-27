@@ -8,6 +8,11 @@ import { delay } from './delay';
 import Logger from './logger';
 
 export default class AccountStore {
+  public liquidatorPerpBalances: any[];
+  public liquidatablePerpAccounts: any[];
+  public liquidatableSoloAccounts: any[];
+  public expiredAccounts: any[];
+
   constructor() {
     this.liquidatorPerpBalances = [];
     this.liquidatablePerpAccounts = [];

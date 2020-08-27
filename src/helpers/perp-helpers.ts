@@ -1,5 +1,4 @@
-import BigNumber from 'bignumber.js';
-import { ConfirmationType } from '@dydxprotocol/perpetual';
+import { BigNumber, ConfirmationType } from '@dydxprotocol/perpetual';
 import { perp } from './web3';
 import { getGasPrice } from '../lib/gas-price';
 import Logger from '../lib/logger';

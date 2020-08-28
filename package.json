@@ -1,6 +1,6 @@
 {
   "name": "liquidator",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Microservice to bid on dYdX closing auctions",
   "main": "build/src/index.js",
   "scripts": {

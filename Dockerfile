@@ -7,7 +7,6 @@ USER dydx
 
 WORKDIR /home/dydx/app
 
-COPY ./.babelrc* ./
 COPY ./.env* ./
 COPY ./package.json ./package-lock.json ./
 RUN npm ci --loglevel warn

@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from '@dydxprotocol/solo';
 import { AccountOperation } from '@dydxprotocol/solo/dist/src/modules/operate/AccountOperation';
 import SoloLiquidator from '../src/lib/solo-liquidator';
 import AccountStore from '../src/lib/account-store';
@@ -12,10 +12,10 @@ jest.mock('@dydxprotocol/solo/dist/src/modules/operate/AccountOperation');
 jest.mock('../src/helpers/block-helper');
 
 describe('solo-liquidator', () => {
-  let accountStore;
-  let marketStore;
-  let liquidationStore;
-  let soloLiquidator;
+  let accountStore: AccountStore;
+  let marketStore: MarketStore;
+  let liquidationStore: LiquidationStore;
+  let soloLiquidator: SoloLiquidator;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -23,12 +23,14 @@ describe('solo-liquidator', () => {
     marketStore = new MarketStore();
     liquidationStore = new LiquidationStore();
     soloLiquidator = new SoloLiquidator(accountStore, marketStore, liquidationStore);
-    blockHelper.getLatestBlockTimestamp = jest.fn().mockImplementation(() => DateTime.local());
+    (blockHelper.getLatestBlockTimestamp as any) = jest.fn().mockImplementation(
+      async () => DateTime.utc(2020, 1, 1),
+    );
   });
 
   describe('#_liquidateAccounts', () => {
     it('Successfully liquidates accounts', async () => {
-      process.env.SOLO_EXPIRATIONS_ENABLED = true;
+      process.env.SOLO_EXPIRATIONS_ENABLED = 'true';
 
       const liquidatableAccounts = getTestLiquidatableAccounts();
       const expiredAccounts = getTestExpiredAccounts();
@@ -47,10 +49,9 @@ describe('solo-liquidator', () => {
       );
 
       let commitCount = 0;
-      const liquidations = [];
-      const liquidateExpiredV1s = [];
-      const liquidateExpiredV2s = [];
-      AccountOperation.mockImplementation(() => ({
+      const liquidations: any[] = [];
+      const liquidateExpiredV2s: any[] = [];
+      (AccountOperation as any).mockImplementation(() => ({
         fullyLiquidateExpiredAccountV2: (...args) => {
           liquidateExpiredV2s.push(args);
         },
@@ -70,7 +71,6 @@ describe('solo-liquidator', () => {
 
       expect(liquidations.length).toBe(liquidatableAccounts.length);
       expect(commitCount).toBe(liquidateExpiredV2s.length);
-      expect(liquidateExpiredV1s.length).toBe(0);
       expect(liquidateExpiredV2s.length).toBe(1);
 
       const sortedLiquidations = liquidatableAccounts.map(account => liquidations.find(
@@ -152,35 +152,6 @@ function getTestLiquidatableAccounts() {
 
 function getTestExpiredAccounts() {
   return [
-    {
-      uuid: '111',
-      owner: '0x78F4529554137A9015dC653758aB600aBC2ffD48',
-      number: '11',
-      balances: {
-        0: {
-          par: '-1010101010101010010101010010101010101001010',
-          wei: '-2010101010101010010101010010101010101001010',
-          expiresAt: DateTime.utc(1982, 5, 25).toISO(),
-          expiryAddress: null,
-        },
-        1: {
-          par: '1010101010101010010101010010101010101001010',
-          wei: '2010101010101010010101010010101010101001010',
-          expiresAt: null,
-          expiryAddress: null,
-        },
-        2: {
-          par: '-1010101010101010010101010010101010101001010',
-          wei: '-2010101010101010010101010010101010101001010',
-          expiresAt: DateTime.utc(2050, 5, 25).toISO(),
-          expiryAddress: solo.contracts.expiry.options.address,
-        },
-        3: {
-          par: '-1010101010101010010101010010101010101001010',
-          wei: '-2010101010101010010101010010101010101001010',
-        },
-      },
-    },
     {
       uuid: '222',
       owner: '0x78F4529554137A9015dC653758aB600aBC2ffD48',

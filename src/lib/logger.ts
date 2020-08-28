@@ -44,7 +44,7 @@ if (!test || process.env.LOGS) {
       level: 'debug',
       handleExceptions: true,
       format: alignedWithColorsAndTime,
-    }),
+    }) as any,
   );
 }
 

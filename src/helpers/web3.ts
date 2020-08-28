@@ -1,18 +1,21 @@
 import { Web3, Solo } from '@dydxprotocol/solo';
-import { Perpetual } from '@dydxprotocol/perpetual';
+import { Perpetual, PerpetualMarket } from '@dydxprotocol/perpetual';
 import Logger from '../lib/logger';
 
 const WALLET_ADDRESS = process.env.WALLET_ADDRESS.toLowerCase();
 const opts = { defaultAccount: WALLET_ADDRESS };
 
+const provider: any = new Web3.providers.HttpProvider(process.env.ETHEREUM_NODE_URL);
+
 export const solo = new Solo(
-  new Web3.providers.HttpProvider(process.env.ETHEREUM_NODE_URL),
+  provider,
   Number(process.env.NETWORK_ID),
   opts,
 );
 
 export const perp = new Perpetual(
-  new Web3.providers.HttpProvider(process.env.ETHEREUM_NODE_URL),
+  provider,
+  PerpetualMarket.PBTC_USDC,
   Number(process.env.NETWORK_ID),
   opts,
 );

@@ -1,9 +1,21 @@
 import { liquidateAccount, liquidateExpiredAccount } from '../helpers/solo-helpers';
 import Logger from './logger';
 import { delay } from './delay';
+import AccountStore from './account-store';
+import LiquidationStore from './liquidation-store';
+import MarketStore from './market-store';
 
 export default class SoloLiquidator {
-  constructor(accountStore, marketStore, liquidationStore) {
+
+  public accountStore: AccountStore;
+  public marketStore: MarketStore;
+  public liquidationStore: LiquidationStore;
+
+  constructor(
+    accountStore: AccountStore,
+    marketStore: MarketStore,
+    liquidationStore: LiquidationStore,
+  ) {
     this.accountStore = accountStore;
     this.marketStore = marketStore;
     this.liquidationStore = liquidationStore;
@@ -44,7 +56,7 @@ export default class SoloLiquidator {
     expiredAccounts.forEach(a => this.liquidationStore.add(a));
 
     await Promise.all([
-      Promise.all(liquidatableAccounts.map(async (account) => {
+      ...liquidatableAccounts.map(async (account) => {
         try {
           await liquidateAccount(account);
         } catch (error) {
@@ -58,8 +70,8 @@ export default class SoloLiquidator {
             error,
           });
         }
-      })),
-      Promise.all(expiredAccounts.map(async (account) => {
+      }),
+      ...expiredAccounts.map(async (account) => {
         try {
           await liquidateExpiredAccount(account, markets);
         } catch (error) {
@@ -73,7 +85,7 @@ export default class SoloLiquidator {
             error,
           });
         }
-      })),
+      }),
     ]);
   }
 }

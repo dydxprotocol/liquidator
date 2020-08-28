@@ -3,6 +3,7 @@ node_modules
 
 # testing
 coverage
+junit.xml
 
 # production
 build

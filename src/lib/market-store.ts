@@ -3,6 +3,9 @@ import { delay } from './delay';
 import Logger from './logger';
 
 export default class MarketStore {
+  public soloMarkets: any[];
+  public perpMarkets: any[];
+
   constructor() {
     this.soloMarkets = [];
     this.perpMarkets = [];

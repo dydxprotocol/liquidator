@@ -1,4 +1,7 @@
+import { ApiMarketName } from '@dydxprotocol/perpetual';
+import { ApiAccount } from '@dydxprotocol/solo';
 import {
+  PerpetualAccount,
   getPerpAccountBalances,
   getLiquidatablePerpAccounts,
   getLiquidatableSoloAccounts,
@@ -6,27 +9,53 @@ import {
 } from '../clients/dydx';
 import { delay } from './delay';
 import Logger from './logger';
+import { PERPETUAL_MARKETS } from './constants';
+
+interface PerpetualBalance {
+  margin: string,
+  position: string,
+  pendingMargin: string,
+  pendingPosition: string,
+}
+
+const EMPTY_BALANCE: PerpetualBalance = {
+  margin: '0',
+  position: '0',
+  pendingMargin: '0',
+  pendingPosition: '0',
+};
 
 export default class AccountStore {
-  public liquidatorPerpBalances: any[];
-  public liquidatablePerpAccounts: any[];
-  public liquidatableSoloAccounts: any[];
-  public expiredAccounts: any[];
+  public liquidatorPerpBalances: { [market: string]: PerpetualBalance };
+  public liquidatablePerpAccounts: PerpetualAccount[];
+  public liquidatableSoloAccounts: ApiAccount[];
+  public expiredAccounts: ApiAccount[];
 
   constructor() {
-    this.liquidatorPerpBalances = [];
+    this.liquidatorPerpBalances = {};
+    PERPETUAL_MARKETS.forEach((market: ApiMarketName) => {
+      this.liquidatorPerpBalances[market] = EMPTY_BALANCE;
+    });
     this.liquidatablePerpAccounts = [];
     this.liquidatableSoloAccounts = [];
     this.expiredAccounts = [];
   }
 
-  getLiquidatorPerpBalances = () => this.liquidatorPerpBalances;
+  public getLiquidatorPerpBalances(): { [market: string]: PerpetualBalance } {
+    return this.liquidatorPerpBalances;
+  }
 
-  getLiquidatablePerpAccounts = () => this.liquidatablePerpAccounts;
+  public getLiquidatablePerpAccounts(): PerpetualAccount[] {
+    return this.liquidatablePerpAccounts;
+  }
 
-  getLiquidatableSoloAccounts = () => this.liquidatableSoloAccounts;
+  public getLiquidatableSoloAccounts(): ApiAccount[] {
+    return this.liquidatableSoloAccounts;
+  }
 
-  getExpiredAccounts = () => this.expiredAccounts;
+  public getExpiredAccounts(): ApiAccount[] {
+    return this.expiredAccounts;
+  }
 
   start = () => {
     Logger.info({

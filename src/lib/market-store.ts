@@ -1,19 +1,25 @@
+import { ApiMarket } from '@dydxprotocol/solo';
+import { ApiMarketMessage } from '@dydxprotocol/perpetual';
 import { getPerpMarkets, getSoloMarkets } from '../clients/dydx';
 import { delay } from './delay';
 import Logger from './logger';
 
 export default class MarketStore {
-  public soloMarkets: any[];
-  public perpMarkets: any[];
+  public soloMarkets: ApiMarket[];
+  public perpMarkets: ApiMarketMessage[];
 
   constructor() {
     this.soloMarkets = [];
     this.perpMarkets = [];
   }
 
-  getSoloMarkets = () => this.soloMarkets;
+  public getSoloMarkets(): ApiMarket[] {
+    return this.soloMarkets;
+  }
 
-  getPerpMarkets = () => this.perpMarkets;
+  public getPerpMarkets(): ApiMarketMessage[] {
+    return this.perpMarkets;
+  }
 
   start = () => {
     Logger.info({

@@ -61,12 +61,9 @@ export default class SoloLiquidator {
           await liquidateAccount(account);
         } catch (error) {
           Logger.error({
-            ...error.trace,
             at: 'SoloLiquidator#_liquidateAccounts',
             message: `Failed to liquidate account: ${error.message}`,
-            accountUuid: account.uuid,
-            accountOwner: account.owner,
-            accountNumber: account.number,
+            account,
             error,
           });
         }
@@ -76,12 +73,9 @@ export default class SoloLiquidator {
           await liquidateExpiredAccount(account, markets);
         } catch (error) {
           Logger.error({
-            ...error.trace,
             at: 'SoloLiquidator#_liquidateAccounts',
             message: `Failed to liquidate expired account: ${error.message}`,
-            accountUuid: account.uuid,
-            accountOwner: account.owner,
-            accountNumber: account.number,
+            account,
             error,
           });
         }

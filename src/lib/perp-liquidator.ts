@@ -1,10 +1,17 @@
-import { BigNumber } from '@dydxprotocol/perpetual';
+import { BigNumber, ApiMarketName } from '@dydxprotocol/perpetual';
+import { PerpetualAccount } from '../clients/dydx';
 import { liquidatePerpetualAccount } from '../helpers/perp-helpers';
 import Logger from './logger';
 import { delay } from './delay';
 import AccountStore from './account-store';
 import LiquidationStore from './liquidation-store';
 import MarketStore from './market-store';
+import { PERPETUAL_MARKETS } from './constants';
+
+export interface MaxPositions {
+  maxPosPosition: BigNumber,
+  maxNegPosition: BigNumber,
+}
 
 export default class PerpLiquidator {
 
@@ -39,32 +46,40 @@ export default class PerpLiquidator {
   }
 
   _liquidateAccounts = async () => {
-    const liquidatableAccounts = this.accountStore.getLiquidatablePerpAccounts()
+    const maxPositions: { [market: string]: MaxPositions } = {};
+    const liquidatableAccounts: PerpetualAccount[] = this.accountStore.getLiquidatablePerpAccounts()
       .filter(a => !this.liquidationStore.contains(a));
 
-    // Get values from the markets.
-    const market = 'PBTC-USDC';
-    const perpetualMarkets = this.marketStore.getPerpMarkets();
-    const btcMarket = perpetualMarkets.find(m => m.market === market);
+    PERPETUAL_MARKETS.forEach((market: ApiMarketName) => {
+      // Get values from the markets.
+      const perpetualMarkets = this.marketStore.getPerpMarkets();
+      const marketStore = perpetualMarkets.find(m => m.market === market);
 
-    // Markets not loaded yet.
-    if (!btcMarket) {
-      return;
-    }
+      // Market not loaded yet.
+      if (!marketStore) {
+        return;
+      }
 
-    // Get the value of the account in margin-tokens.
-    const btcPrice = new BigNumber(btcMarket.oraclePrice);
-    const balances = this.accountStore.getLiquidatorPerpBalances()[market];
-    const margin = new BigNumber(balances.margin).plus(balances.pendingMargin);
-    const position = new BigNumber(balances.position).plus(balances.pendingPosition);
-    const accountValue = position.times(btcPrice).plus(margin);
+      // Get the value of the account in margin-tokens.
+      const balances = this.accountStore.getLiquidatorPerpBalances()[market];
+      const margin = new BigNumber(balances.margin).plus(balances.pendingMargin);
+      const position = new BigNumber(balances.position).plus(balances.pendingPosition);
+      const oraclePrice = new BigNumber(marketStore.oraclePrice);
+      const accountValueInMargin = position.times(oraclePrice).plus(margin);
 
-    // Get maximum acceptable position sizes for the liquidator.
-    const defaultMultiplier = new BigNumber(1).div(process.env.PERP_MIN_ACCOUNT_COLLATERALIZATION);
-    const maxNegValue = accountValue.times(defaultMultiplier);
-    const maxPosValue = accountValue.times(defaultMultiplier.plus(1));
-    const maxPosPosition = maxPosValue.div(btcPrice).integerValue();
-    const maxNegPosition = maxNegValue.div(btcPrice).integerValue().negated();
+      // Get maximum acceptable position sizes for the liquidator.
+      const defaultMultiplier = new BigNumber(1).div(process.env.PERP_MIN_ACCOUNT_COLLATERALIZATION);
+      const maxNegValue = accountValueInMargin.times(defaultMultiplier);
+      const maxPosValue = accountValueInMargin.times(defaultMultiplier.plus(1));
+      const maxPosPosition = maxPosValue.div(oraclePrice).integerValue();
+      const maxNegPosition = maxNegValue.div(oraclePrice).integerValue().negated();
+
+      // Set the maximum position sizes for each market.
+      maxPositions[market] = {
+        maxPosPosition,
+        maxNegPosition,
+      };
+    });
 
     if (liquidatableAccounts.length === 0) {
       Logger.info({
@@ -76,15 +91,14 @@ export default class PerpLiquidator {
 
     liquidatableAccounts.forEach(a => this.liquidationStore.add(a));
 
-    await Promise.all(liquidatableAccounts.map(async (account) => {
+    await Promise.all(liquidatableAccounts.map(async (account: PerpetualAccount) => {
       try {
-        await liquidatePerpetualAccount(maxPosPosition, maxNegPosition, account);
+        await liquidatePerpetualAccount(maxPositions, account);
       } catch (error) {
         Logger.error({
-          ...error.trace,
           at: 'PerpLiquidator#_liquidateAccounts',
           message: `Failed to liquidate account: ${error.message}`,
-          accountOwner: account.owner,
+          account,
           error,
         });
       }

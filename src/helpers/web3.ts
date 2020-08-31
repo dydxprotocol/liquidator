@@ -13,12 +13,41 @@ export const solo = new Solo(
   opts,
 );
 
-export const perp = new Perpetual(
+export const btcPerp = new Perpetual(
   provider,
   PerpetualMarket.PBTC_USDC,
   Number(process.env.NETWORK_ID),
   opts,
 );
+
+export const ethPerp = new Perpetual(
+  provider,
+  PerpetualMarket.WETH_PUSD,
+  Number(process.env.NETWORK_ID),
+  opts,
+);
+
+export const linkPerp = new Perpetual(
+  provider,
+  PerpetualMarket.PLINK_USDC,
+  Number(process.env.NETWORK_ID),
+  opts,
+);
+
+export function getPerpetualByMarket(
+  market: PerpetualMarket,
+): Perpetual {
+  switch (market) {
+    case PerpetualMarket.PBTC_USDC:
+      return btcPerp;
+    case PerpetualMarket.WETH_PUSD:
+      return ethPerp;
+    case PerpetualMarket.PLINK_USDC:
+      return linkPerp;
+    default:
+      throw new Error(`Unsupported market for perpetual: ${market}`);
+  }
+}
 
 export async function loadAccounts() {
   if (!process.env.WALLET_PRIVATE_KEY) {
@@ -42,23 +71,24 @@ export async function loadAccounts() {
   const soloAccount = solo.web3.eth.accounts.wallet.add(
     process.env.WALLET_PRIVATE_KEY,
   );
-  const perpAccount = perp.web3.eth.accounts.wallet.add(
+  btcPerp.web3.eth.accounts.wallet.add(
+    process.env.WALLET_PRIVATE_KEY,
+  );
+  ethPerp.web3.eth.accounts.wallet.add(
+    process.env.WALLET_PRIVATE_KEY,
+  );
+  linkPerp.web3.eth.accounts.wallet.add(
     process.env.WALLET_PRIVATE_KEY,
   );
 
   const soloAddress = soloAccount.address.toLowerCase();
-  const perpAddress = perpAccount.address.toLowerCase();
 
-  if (
-    soloAddress !== WALLET_ADDRESS
-    || perpAddress !== WALLET_ADDRESS
-  ) {
+  if (soloAddress !== WALLET_ADDRESS) {
     Logger.error({
       at: 'web3#loadAccounts',
       message: 'Owner private key does not match address',
       expected: process.env.WALLET_ADDRESS,
       soloAddress,
-      perpAddress,
       error: new Error('Owner private key does not match address'),
     });
   } else {

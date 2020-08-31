@@ -42,8 +42,8 @@ export async function liquidateAccount(account) {
   }
 
   const sender = process.env.WALLET_ADDRESS;
-  const borrowMarkets: any[] = [];
-  const supplyMarkets: any[] = [];
+  const borrowMarkets: string[] = [];
+  const supplyMarkets: string[] = [];
 
   Object.keys(account.balances).forEach((marketId) => {
     const par = new BigNumber(account.balances[marketId].par);
@@ -98,12 +98,12 @@ export async function liquidateExpiredAccount(account, markets) {
   const sender = process.env.WALLET_ADDRESS;
   const lastBlockTimestamp = await getLatestBlockTimestamp();
 
-  const expiredMarkets: any[] = [];
+  const expiredMarkets: string[] = [];
   const operation = solo.operation.initiate();
 
-  const weis: any[] = [];
-  const prices: any[] = [];
-  const spreadPremiums: any[] = [];
+  const weis: BigNumber[] = [];
+  const prices: BigNumber[] = [];
+  const spreadPremiums: BigNumber[] = [];
   const collateralPreferencesBN = collateralPreferences.map(p => new BigNumber(p));
 
   for (let i = 0; i < collateralPreferences.length; i += 1) {

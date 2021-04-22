@@ -1,6 +1,6 @@
 {
   "name": "liquidator",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "Microservice to bid on dYdX closing auctions",
   "main": "build/src/index.js",
   "scripts": {
@@ -25,7 +25,6 @@
   "homepage": "https://github.com/dydxprotocol/liquidator#readme",
   "dependencies": {
     "@dydxprotocol/solo": "^0.38.2",
-    "@dydxprotocol/perpetual": "^1.2.1",
     "dotenv-flow": "^0.4.0",
     "lodash": "^4.17.15",
     "lru-cache": "^5.1.1",

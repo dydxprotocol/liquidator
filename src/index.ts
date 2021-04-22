@@ -6,7 +6,6 @@ import AccountStore from './lib/account-store';
 import MarketStore from './lib/market-store';
 import LiquidationStore from './lib/liquidation-store';
 import SoloLiquidator from './lib/solo-liquidator';
-import PerpLiquidator from './lib/perp-liquidator';
 import GasPriceUpdater from './lib/gas-price-updater';
 import { loadAccounts, initializeSoloLiquidations } from './helpers/web3';
 
@@ -25,7 +24,6 @@ async function start() {
   const marketStore = new MarketStore();
   const liquidationStore = new LiquidationStore();
   const soloLiquidator = new SoloLiquidator(accountStore, marketStore, liquidationStore);
-  const perpLiquidator = new PerpLiquidator(accountStore, marketStore, liquidationStore);
   const gasPriceUpdater = new GasPriceUpdater();
 
   await loadAccounts();
@@ -43,10 +41,6 @@ async function start() {
     || process.env.SOLO_EXPIRATIONS_ENABLED === 'true'
   ) {
     soloLiquidator.start();
-  }
-
-  if (process.env.PERP_LIQUIDATIONS_ENABLED === 'true') {
-    perpLiquidator.start();
   }
 }
 

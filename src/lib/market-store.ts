@@ -1,24 +1,17 @@
 import { ApiMarket } from '@dydxprotocol/solo';
-import { ApiMarketMessage } from '@dydxprotocol/perpetual';
-import { getPerpMarkets, getSoloMarkets } from '../clients/dydx';
+import { getSoloMarkets } from '../clients/dydx';
 import { delay } from './delay';
 import Logger from './logger';
 
 export default class MarketStore {
   public soloMarkets: ApiMarket[];
-  public perpMarkets: ApiMarketMessage[];
 
   constructor() {
     this.soloMarkets = [];
-    this.perpMarkets = [];
   }
 
   public getSoloMarkets(): ApiMarket[] {
     return this.soloMarkets;
-  }
-
-  public getPerpMarkets(): ApiMarketMessage[] {
-    return this.perpMarkets;
   }
 
   start = () => {
@@ -51,16 +44,9 @@ export default class MarketStore {
       message: 'Updating markets...',
     });
 
-    const [
-      { markets: nextSoloMarkets },
-      { markets: nextPerpMarkets },
-    ] = await Promise.all([
-      getSoloMarkets(),
-      getPerpMarkets(),
-    ]);
+    const { markets: nextSoloMarkets } = await getSoloMarkets();
 
     this.soloMarkets = nextSoloMarkets;
-    this.perpMarkets = nextPerpMarkets;
 
     Logger.info({
       at: 'MarketStore#_update',

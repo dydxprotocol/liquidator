@@ -1,5 +1,4 @@
 import { Web3, Solo } from '@dydxprotocol/solo';
-import { Perpetual, PerpetualMarket } from '@dydxprotocol/perpetual';
 import Logger from '../lib/logger';
 
 const WALLET_ADDRESS = process.env.WALLET_ADDRESS.toLowerCase();
@@ -12,42 +11,6 @@ export const solo = new Solo(
   Number(process.env.NETWORK_ID),
   opts,
 );
-
-export const btcPerp = new Perpetual(
-  provider,
-  PerpetualMarket.PBTC_USDC,
-  Number(process.env.NETWORK_ID),
-  opts,
-);
-
-export const ethPerp = new Perpetual(
-  provider,
-  PerpetualMarket.WETH_PUSD,
-  Number(process.env.NETWORK_ID),
-  opts,
-);
-
-export const linkPerp = new Perpetual(
-  provider,
-  PerpetualMarket.PLINK_USDC,
-  Number(process.env.NETWORK_ID),
-  opts,
-);
-
-export function getPerpetualByMarket(
-  market: PerpetualMarket,
-): Perpetual {
-  switch (market) {
-    case PerpetualMarket.PBTC_USDC:
-      return btcPerp;
-    case PerpetualMarket.WETH_PUSD:
-      return ethPerp;
-    case PerpetualMarket.PLINK_USDC:
-      return linkPerp;
-    default:
-      throw new Error(`Unsupported market for perpetual: ${market}`);
-  }
-}
 
 export async function loadAccounts() {
   if (!process.env.WALLET_PRIVATE_KEY) {
@@ -69,15 +32,6 @@ export async function loadAccounts() {
   }
 
   const soloAccount = solo.web3.eth.accounts.wallet.add(
-    process.env.WALLET_PRIVATE_KEY,
-  );
-  btcPerp.web3.eth.accounts.wallet.add(
-    process.env.WALLET_PRIVATE_KEY,
-  );
-  ethPerp.web3.eth.accounts.wallet.add(
-    process.env.WALLET_PRIVATE_KEY,
-  );
-  linkPerp.web3.eth.accounts.wallet.add(
     process.env.WALLET_PRIVATE_KEY,
   );
 

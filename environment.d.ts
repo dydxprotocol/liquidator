@@ -4,7 +4,6 @@ declare global {
     interface ProcessEnv {
       ETHEREUM_NODE_URL: string,
       LIQUIDATION_KEY_EXPIRATION_SEC: string,
-      PERP_MIN_ACCOUNT_COLLATERALIZATION: string,
       SOLO_ACCOUNT_NUMBER: string,
       SOLO_COLLATERAL_PREFERENCES: string,
       SOLO_EXPIRATIONS_ENABLED: string,

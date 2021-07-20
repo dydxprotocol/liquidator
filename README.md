@@ -32,7 +32,7 @@ Requires a running [docker](https://docker.com) engine.
 docker run \
   -e WALLET_ADDRESS=0x2c7536E3605D9C16a7a3D7b1898e529396a65c23 \
   -e WALLET_PRIVATE_KEY=0x4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318 \
-  -e ETHEREUM_NODE_URL=https://mainnet.infura.io/v3/YOUR_INFURA_KEY \
+  -e ETHEREUM_NODE_URL=https://eth-mainnet.alchemyapi.io/v2/YOUR_ALCHEMY_KEY\
   -e SOLO_LIQUIDATIONS_ENABLED=true \
   -e SOLO_EXPIRATIONS_ENABLED=false \
   dydxprotocol/liquidator
@@ -93,7 +93,7 @@ Liquidator Account:
 |WALLET_ADDRESS|**REQUIRED** Ethereum address of the dYdX account owner that will do the liquidations
 |WALLET_PRIVATE_KEY|**REQUIRED** Ethereum private key the dYdX account owner that will do the liquidations. Make sure that "0x" is at the start of it (MetaMask exports private keys without it).|
 |NETWORK_ID|Ethereum Network ID|
-|ETHEREUM_NODE_URL|**REQUIRED** The URL of the Ethereum node to use (e.g. an infura url)|
+|ETHEREUM_NODE_URL|**REQUIRED** The URL of the Ethereum node to use (e.g. an [Alchemy](https://alchemy.com/?r=99314874-10ab-44f3-9070-9abd86f4388d) or [Infura](https://infura.io/) endpoint)|
 |LIQUIDATION_KEY_EXPIRATION_SEC|Amount of time in seconds to wait before trying to liquidate the same account again|300|
 |GAS_STATION_URL|URL of the gas station API to use|
 |GAS_PRICE_MULTIPLIER|How much to multiply the `fast` gas price by when sending transactions|

@@ -13,12 +13,9 @@
   <a href='https://github.com/dydxprotocol/solo/blob/master/LICENSE' style="text-decoration:none;">
     <img src='https://img.shields.io/github/license/dydxprotocol/protocol.svg?longCache=true' alt='License' />
   </a>
-  <a href='https://t.me/joinchat/GBnMlBb9mQblQck2pThTgw' style="text-decoration:none;">
-    <img src='https://img.shields.io/badge/chat-on%20telegram-9cf.svg?longCache=true' alt='Telegram' />
-  </a>
 </div>
 
-# dYdX Liquidator
+# DEPRECATED [dYdX Liquidator]
 
 Bot to automatically liquidate undercollateralized and expired dYdX accounts.
 
